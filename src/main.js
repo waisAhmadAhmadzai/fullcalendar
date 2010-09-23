@@ -3,11 +3,6 @@
 var fc = $.fullCalendar = {};
 var fcViews = fc.views = {};
 
-//IE9 dnd fix, jQuery UI Mouse (<= 1.8.5) doesnt support IE9 event.buttons
-if ($.ui && $.browser.msie && $.browser.version == '9.0') {
-	var mm=$.ui.mouse.prototype._mouseMove;
-	$.ui.mouse.prototype._mouseMove=function(b){b.button=1;mm.apply(this,[b]);}
-}
 
 $.fn.fullCalendar = function(options) {
 

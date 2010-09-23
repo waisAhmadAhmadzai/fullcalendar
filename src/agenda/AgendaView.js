@@ -266,6 +266,8 @@ function AgendaView(element, calendar, viewName) {
 		slotTopCache = {};
 		
 		setOuterHeight(body,height - getHeight(head));
+		if (msie9)
+			setOuterHeight(body,height - getHeight(head) - 1);
 		
 		slotHeight = getHeight(body.find('tr:first div')) + 1;
 		
@@ -307,12 +309,15 @@ function AgendaView(element, calendar, viewName) {
 		axisTHs.each(function() {
 			axisWidth = Math.max(axisWidth, $(this).outerWidth());
 		});
-		setOuterWidth(axisTHs, axisWidth);
+		if (!msie9)
+			setOuterWidth(axisTHs,axisWidth);
 		
 		// column width
 		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
-		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
+		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
+		if (msie9) //no border on first day
+			stripeTDs.first().outerWidth(colWidth - 1);
 
 		var scrollbar=body[0].scrollHeight!=body[0].clientHeight;
 		if (scrollbar) {

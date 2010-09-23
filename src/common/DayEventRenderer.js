@@ -177,7 +177,7 @@ function DayEventRenderer() {
 				i++;
 			}
 			rowDivs[rowI] = allDayTR(rowI).find('td:first div.fc-day-content > div'); // optimal selector?
-			setOuterHeight(rowDivs[rowI],top + levelHeight);
+			rowDivs[rowI].height(top + levelHeight);
 		}
 	
 		// calculate row tops
