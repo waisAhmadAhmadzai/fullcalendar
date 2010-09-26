@@ -81,9 +81,15 @@ function DayEventRenderer() {
 				left = seg.isStart ? colContentLeft(dayOfWeekCol(seg.start.getDay())) : minLeft;
 				right = seg.isEnd ? colContentRight(dayOfWeekCol(seg.end.getDay()-1)) : maxLeft;
 			}
-			var color;
+			var color='';
 			if (event.color) {
-				color = ";background-color:" + event.color + ";border-color:" + event.color;
+				color = "color:" + event.color + ";";
+			}
+			if (event.bgColor) {
+				color += "background-color:" + event.bgColor + ";";
+			}
+			if (event.borderColor) {
+				color += "border-color:" + event.borderColor + ";";
 			}
 			html +=
 				"<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;left:"+left+"px'>" +

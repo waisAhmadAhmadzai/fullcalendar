@@ -185,6 +185,9 @@ function EventManager(options, eventSources) {
 				e.editable = event.editable;
 				e.resizable = event.resizable;
 				e.color = event.color;
+				e.bgColor = event.bgColor;
+				e.borderColor = event.borderColor;
+				
 				normalizeEvent(e);
 			}
 		}

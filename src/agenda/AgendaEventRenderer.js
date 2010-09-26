@@ -287,10 +287,17 @@ function AgendaEventRenderer() {
 	
 	
 	function slotSegHtml(event, seg, className) {
-		var color;
+		var color='';
 		if (event.color) {
-			color = ";background-color:" + event.color + ";border-color:" + event.color;
+			color += "color:" + event.color + ";";
 		}
+		if (event.bgColor) {
+			color += "background-color:" + event.bgColor + ";";
+		}
+		if (event.borderColor) {
+			color += "border-color:" + event.borderColor + ";";
+		}
+		
 		return "<div class='" + className + event.className.join(' ') + "' style='position:absolute;z-index:8;top:" + seg.top + "px;left:" + seg.left + "px'>" +
 			"<a" + (event.url ? " href='" + htmlEscape(event.url) + "'" : '') + (color ? " style='" + color + "'" : '') + ">" +
 				"<span class='fc-event-bg'></span>" +
