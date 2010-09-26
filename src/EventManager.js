@@ -125,6 +125,7 @@ function EventManager(options, eventSources) {
 			// TODO: respect cache param in ajaxSetup
 			$.ajax({
 				url: src,
+				type: options.requestMethod || 'GET',
 				dataType: 'json',
 				data: params,
 				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
