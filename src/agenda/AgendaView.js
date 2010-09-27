@@ -227,22 +227,14 @@ function AgendaView(element, calendar, viewName) {
 			bg.find('td').each(function(i, td) {
 				td.className = td.className.replace(/^fc-\w+(?= )/, 'fc-' + dayIDs[d.getDay()]);
 				if (+d == +today) {
-					$(td)
-						.removeClass('fc-not-today')
-						.removeClass('fc-before-today')
-						.addClass('fc-today')
-						.addClass(tm + '-state-highlight');
+					$(td).removeClass('fc-not-today fc-before-today')
+					     .addClass(tm + '-state-highlight fc-today');
 				}else if (+d < +today) {
-					$(td)
-						.addClass('fc-before-today')
-						.addClass('fc-not-today')
-						.removeClass(tm + '-state-highlight');
+					$(td).addClass('fc-not-today fc-before-today')
+					     .removeClass(tm + '-state-highlight fc-today');
 				}else{
-					$(td)
-						.addClass('fc-not-today')
-						.removeClass('fc-today')
-						.removeClass('fc-before-today')
-						.removeClass(tm + '-state-highlight');
+					$(td).addClass('fc-not-today')
+					     .removeClass(tm + '-state-highlight fc-today fc-before-today');
 				}
 				addDays(d, dis);
 				if (nwe) {

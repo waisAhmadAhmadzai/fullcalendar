@@ -181,19 +181,14 @@ function BasicView(element, calendar, viewName) {
 					}
 				}
 				if (+d == +today) {
-					td.removeClass('fc-not-today')
-						.removeClass('fc-before-today')
-						.addClass('fc-today')
-						.addClass(tm + '-state-highlight');
+					td.removeClass('fc-not-today fc-before-today')
+					  .addClass(tm + '-state-highlight fc-today');
 				}else if (+d < +today) {
-					td.addClass('fc-before-today')
-						.addClass('fc-not-today')
-						.removeClass(tm + '-state-highlight');
+					td.addClass('fc-not-today fc-before-today')
+					  .removeClass(tm + '-state-highlight fc-today');
 				}else{
 					td.addClass('fc-not-today')
-						.removeClass('fc-before-today')
-						.removeClass('fc-today')
-						.removeClass(tm + '-state-highlight');
+					  .removeClass(tm + '-state-highlight fc-today fc-before-today');
 				}
 				td.find('div.fc-day-number').text(d.getDate());
 				addDays(d, 1);
