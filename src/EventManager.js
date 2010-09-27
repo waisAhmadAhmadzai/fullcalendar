@@ -282,8 +282,8 @@ function EventManager(options, eventSources) {
 			}
 			delete event.date;
 		}
-		event._start = cloneDate(event.start = parseDate(event.start));
-		event.end = parseDate(event.end);
+		event._start = cloneDate(event.start = parseDate(event.start, options.ignoreTimezone));
+		event.end = parseDate(event.end, options.ignoreTimezone);
 		if (event.end && event.end <= event.start) {
 			event.end = null;
 		}
