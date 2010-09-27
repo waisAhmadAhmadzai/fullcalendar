@@ -112,6 +112,9 @@ function Header(calendar, options) {
 										}
 									)
 									.appendTo($("<td/>").appendTo(tr));
+								if (button.disableSelection) {
+									button.closest('td').disableSelection();
+								}
 								if (prevButton) {
 									prevButton.addClass(tm + '-no-right');
 								}else{
