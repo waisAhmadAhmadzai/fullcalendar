@@ -11,6 +11,7 @@ function EventManager(options, eventSources) {
 	t.isFetchNeeded = isFetchNeeded;
 	t.addEventSource = addEventSource;
 	t.addEventSourceFast = addEventSourceFast;
+	t.clearEventSources = clearEventSources;
 	t.removeEventSource = removeEventSource;
 	t.updateEvent = updateEvent;
 	t.renderEvent = renderEvent;
@@ -50,18 +51,25 @@ function EventManager(options, eventSources) {
 		fetchEventSource(source, rerenderEvents);
 	}
 
+	function clearEventSources() {
+		var sticky = [];
+		events = eventSources = [];
+		eventSources = sticky.concat(eventSources);
+		rerenderEvents();
+	}
+
 	function removeEventSource(source) {
-		var sticky = (typeof eventSources[0] == 'object') ? eventSources.slice(0,1) : [];
-		if (!source) events = eventSources = [];
-		else {
-			eventSources = $.grep(eventSources, function(src) {
-				return src != source;
-			});
-			// remove all client events from that source
-			events = $.grep(events, function(e) {
-				return e.source != source;
-			});
-		}
+		var sticky = [];
+		eventSources = $.grep(eventSources, function(src) {
+			if (typeof src === 'object' && source !== src) {
+				sticky = sticky.concat(src);
+			}
+			return src != source;
+		});
+		// remove all client events from that source
+		events = $.grep(events, function(e) {
+			return e.source != source;
+		});
 		eventSources = sticky.concat(eventSources);
 		rerenderEvents();
 	}
