@@ -257,22 +257,12 @@ function AgendaView(element, calendar, viewName) {
 		viewHeight = height;
 		slotTopCache = {};
 		
-		setOuterHeight(body,height - getHeight(head));
-		if (msie9)
-			setOuterHeight(body,height - getHeight(head) - 1);
+		var bodyHeight = height - getHeight(head);
+		bodyHeight = Math.min(bodyHeight, getHeight(bodyTable)); // shrink to fit table
+		setOuterHeight(body, bodyHeight);
+		if (msie9) setOuterHeight(body,height - getHeight(head) - 1);
 		
 		slotHeight = getHeight(body.find('tr:first div')) + 1;
-		
-		bg.css({
-			top: head.find('tr').outerHeight(),
-			height: height
-		});
-
-		// if the table ends up shorter than the allotted view, shrink the view to fit the table
-		var tableHeight=getHeight(body.find('table:first'));
-		if (tableHeight<getHeight(body)) {
-			body.height(tableHeight);
-		}
 		
 		if (dateChanged) {
 			resetScroll();
@@ -286,42 +276,54 @@ function AgendaView(element, calendar, viewName) {
 		colContentPositions.clear();
 		
 		setOuterWidth(body,width);
-		bodyTable.width('');
+		body.width(width).css('overflow', 'auto');
 		
 		var topTDs = head.find('tr:first th'),
+			allDayLastTH = head.find('tr.fc-all-day th:last'),
 			stripeTDs = bg.find('td'),
 			clientWidth = body[0].clientWidth;
 			
 		setOuterWidth(bodyTable,clientWidth);
+
+		clientWidth = body[0].clientWidth; // in ie6, sometimes previous clientWidth was wrongly reported
+		bodyTable.width(clientWidth);
 		
 		// time-axis width
 		axisWidth = 0;
 		var axisTHs = head.find('tr:lt(2) th:first').add(body.find('tr:first th'));
-		axisTHs.width('');
+		axisTHs.width(1);
 		axisTHs.each(function() {
 			axisWidth = Math.max(axisWidth, $(this).outerWidth());
 		});
-		if (!msie9)
-			setOuterWidth(axisTHs,axisWidth);
+
+		//if (!msie9)
+		setOuterWidth(axisTHs,axisWidth);
 		
-		// column width
+		// column width, except for last column
 		colWidth = Math.floor((clientWidth - axisWidth) / colCnt);
 		setOuterWidth(topTDs.slice(1, -2), colWidth);
 		setOuterWidth(stripeTDs.slice(0, -1), colWidth);
-		if (msie9) //no border on first day
-			stripeTDs.first().outerWidth(colWidth - 1);
 
-		var scrollbar=body[0].scrollHeight!=body[0].clientHeight;
-		if (scrollbar) {
+		//if (msie9) //no border on first day (to recheck with different themes)
+		//	stripeTDs.first().outerWidth(colWidth - 1);
+
+		// column width for last column
+		if (width != clientWidth) { // has scrollbar			
 			setOuterWidth(topTDs.slice(-2, -1), clientWidth - axisWidth - colWidth*(colCnt-1));
-		} else {
+			topTDs.slice(-1).show();
+			allDayLastTH.show();
+		}else{
+			body.css('overflow', 'hidden');
+			topTDs.slice(-2, -1).width('');
 			topTDs.slice(-1).hide();
-			$('tr.fc-all-day th').slice(-1).hide();
+			allDayLastTH.hide();
 		}
 
 		bg.css({
+			top: head.find('tr').height(),
 			left: axisWidth,
-			width: clientWidth - axisWidth
+			width: clientWidth - axisWidth,
+			height: viewHeight
 		});
 	}
 	

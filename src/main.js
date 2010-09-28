@@ -1,5 +1,4 @@
 
-
 var fc = $.fullCalendar = {};
 var fcViews = fc.views = {};
 

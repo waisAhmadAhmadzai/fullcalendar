@@ -17,6 +17,7 @@ var defaults = {
 	//disableResizing: false,
 	
 	allDayDefault: true,
+	ignoreTimezone: true,
 	
 	// event ajax
 	lazyFetching: true,
@@ -37,8 +38,6 @@ var defaults = {
 	timeFormat: { // for event elements
 		'': 'h(:mm)t' // default
 	},
-	// ignoreTimezone for ISO8601 dates in added Events
-	ignoreTimezone: true,
 	
 	// locale
 	isRTL: false,
