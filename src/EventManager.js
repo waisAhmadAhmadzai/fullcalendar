@@ -32,7 +32,7 @@ function EventManager(options, eventSources) {
 	var events = [];
 	var loadingLevel = 0;
 	
-	
+	var loadingSrc = {};
 	
 	/* Sources
 	-----------------------------------------------------------------------------*/
@@ -117,11 +117,20 @@ function EventManager(options, eventSources) {
 						}
 					}
 			},
-			reportEventsAndPop = function(a) {
-				reportEvents(a);
+			reportEventsAndPop = function(a,st,obj) {
+				if (loadingSrc[obj.src] > 0) {
+					loadingSrc[obj.src] = 0;
+					reportEvents(a);
+				}
 				popLoading();
+			},
+			ajaxBeforeFetch = function(obj) {
+				//attach source to xmlhttp request
+				obj.src = src;
 			};
 		if (typeof src == 'string') {
+			loadingSrc[src] = 1;
+			pushLoading();
 			var params = {};
 			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
@@ -129,15 +138,16 @@ function EventManager(options, eventSources) {
 			if (options.cacheParam) {
 				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 			}
-			pushLoading();
 			// TODO: respect cache param in ajaxSetup
 			$.ajax({
 				url: src,
+				global: false,
 				type: options.requestMethod || 'GET',
 				dataType: 'json',
 				data: params,
 				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
-				success: reportEventsAndPop
+				success: reportEventsAndPop,
+				beforeSend: ajaxBeforeFetch
 			});
 		}
 		else if ($.isFunction(src)) {
