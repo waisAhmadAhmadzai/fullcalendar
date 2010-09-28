@@ -276,7 +276,7 @@ function AgendaView(element, calendar, viewName) {
 		colContentPositions.clear();
 		
 		setOuterWidth(body,width);
-		body.width(width).css('overflow', 'auto');
+		body.css('overflow', 'auto').width(width);
 		
 		var topTDs = head.find('tr:first th'),
 			allDayLastTH = head.find('tr.fc-all-day th:last'),
@@ -320,7 +320,7 @@ function AgendaView(element, calendar, viewName) {
 		}
 
 		bg.css({
-			top: head.find('tr').height(),
+			top: getHeight(head.find('tr')),
 			left: axisWidth,
 			width: clientWidth - axisWidth,
 			height: viewHeight
