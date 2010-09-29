@@ -104,9 +104,9 @@ function EventManager(options, eventSources) {
 	function fetchEventSource(src, callback) {
 		var prevView = getView(),
 			prevDate = getDate(),
-			reportEvents = function(a) {
-				if (prevView == getView() && +prevDate == +getDate() && // protects from fast switching
-					$.inArray(src, eventSources) != -1) {               // makes sure source hasn't been removed
+			reportEvents = function(a,src) {
+				//if (prevView == getView() && +prevDate == +getDate() && // protects from fast switching
+				if ($.inArray(src, eventSources) != -1) {               // makes sure source hasn't been removed
 						for (var i=0; i<a.length; i++) {
 							normalizeEvent(a[i]);
 							a[i].source = src;
@@ -118,19 +118,30 @@ function EventManager(options, eventSources) {
 					}
 			},
 			reportEventsAndPop = function(a,st,obj) {
-				if (loadingSrc[obj.src] > 0) {
+				if (obj && obj.src && loadingSrc[obj.src]) {
 					loadingSrc[obj.src] = 0;
-					reportEvents(a);
+					reportEvents(a,obj.src);
+				} else if (!obj) {
+					//function
+					reportEvents(a,src);
+					popLoading();
 				}
-				popLoading();
 			},
 			ajaxBeforeFetch = function(obj) {
+				//prevent double requests
+				if (loadingSrc[src] > 1)
+					return false;
 				//attach source to xmlhttp request
 				obj.src = src;
+				pushLoading();
+			},
+			ajaxAfterFetch = function(obj) {
+				if (obj.src)
+					loadingSrc[obj.src] = 0;
+				popLoading();
 			};
 		if (typeof src == 'string') {
-			loadingSrc[src] = 1;
-			pushLoading();
+			loadingSrc[src] = 1 + (loadingSrc[src]||0);
 			var params = {};
 			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
@@ -147,7 +158,8 @@ function EventManager(options, eventSources) {
 				data: params,
 				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
 				success: reportEventsAndPop,
-				beforeSend: ajaxBeforeFetch
+				beforeSend: ajaxBeforeFetch,
+				complete: ajaxAfterFetch
 			});
 		}
 		else if ($.isFunction(src)) {
@@ -155,7 +167,7 @@ function EventManager(options, eventSources) {
 			src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
 		}
 		else if (src) {
-			reportEvents(src); // src is an array (sticky events)
+			reportEvents(src,src); // src is an array (sticky events)
 		}
 	}
 	
@@ -169,8 +181,6 @@ function EventManager(options, eventSources) {
 		var view = getView();
 		return !eventStart || view.visStart < eventStart || view.visEnd > eventEnd;
 	}
-	
-	
 	
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
