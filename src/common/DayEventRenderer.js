@@ -47,7 +47,7 @@ function DayEventRenderer() {
 			hsideCache={},
 			vmarginCache={},
 			key, val,
-			rowI, top, levelI, levelHeight,
+			rowI, //top, levelI, levelHeight,
 			rowDivs=[],
 			rowDivTops=[],
 			bounds = allDayBounds(),
@@ -168,7 +168,37 @@ function DayEventRenderer() {
 				);
 			}
 		}
-	
+
+		// set row heights by day, calculate event tops (in relation to row top)
+		var levels, dayI, maxHeight, 
+			heights={0:0}, tops={0:0};
+		for (rowI=0; rowI<rowCnt; rowI++) {
+			maxHeight=0;
+			for (dayI=0; dayI<7; dayI++) {
+				levels=0;
+				//get max height of each row level
+				jQuery.each(segs,function(n,seg) {
+					if (seg.row == rowI && seg.start.getDay() == dayI) {
+						levels = Math.max(levels, seg.level);
+						heights[seg.level] = seg.outerHeight||0;
+					}
+				});
+				//relative tops in day
+				for (i=0; i<levels; i++)
+					tops[i+1] = tops[i] + heights[i];
+				//assign top to each event
+				jQuery.each(segs,function(n,seg) {
+					if (seg.row == rowI && seg.start.getDay() == dayI) {
+						seg.top = tops[seg.level];
+					}
+				});
+				maxHeight = Math.max(maxHeight, tops[levels] + heights[levels]);
+			}
+			rowDivs[rowI] = allDayTR(rowI).find('td:first div.fc-day-content > div'); // optimal selector?
+			setOuterHeight(rowDivs[rowI], maxHeight);
+		}
+		
+		/*
 		// set row heights, calculate event tops (in relation to row top)
 		for (i=0, rowI=0; rowI<rowCnt; rowI++) {
 			top = levelI = levelHeight = 0;
@@ -186,6 +216,7 @@ function DayEventRenderer() {
 			if (msie9) setOuterHeight(rowDivs[rowI], top + levelHeight);
 			rowDivs[rowI].height(top + levelHeight);
 		}
+		*/
 	
 		// calculate row tops
 		for (rowI=0; rowI<rowCnt; rowI++) {
