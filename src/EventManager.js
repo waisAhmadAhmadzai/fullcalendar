@@ -28,6 +28,7 @@ function EventManager(options, eventSources) {
 
 	
 	// locals
+	var fetchID = 0;
 	var eventStart, eventEnd;
 	var events = [];
 	var loadingLevel = 0;
@@ -82,26 +83,44 @@ function EventManager(options, eventSources) {
 	
 	// Fetch from ALL sources. Clear 'events' array and populate
 	function fetchEvents(callback) {
-		var view = getView();
 		events = [];
-		eventStart = cloneDate(view.visStart);
-		eventEnd = cloneDate(view.visEnd);
-		var queued = eventSources.length,
-			sourceDone = function() {
+		fetchEventSources(eventSources, callback);
+	}
+	
+	
+	// appends to the events array
+	function fetchEventSources(sources, callback) {
+		var savedID = ++fetchID;
+		var queued = sources.length;
+		var view = getView();
+		eventStart = cloneDate(view.visStart); // we don't need to make local copies b/c
+		eventEnd = cloneDate(view.visEnd);     //   eventStart/eventEnd is only assigned/manipulated here
+		function sourceDone(source, sourceEvents) {
+			if (savedID == fetchID && eventStart >= view.visStart && eventEnd <= view.visEnd) {
+				// same fetchEventSources call, and still in correct date range
+				if ($.inArray(source, eventSources) != -1) { // source hasn't been removed since we started
+					for (var i=0; i<sourceEvents.length; i++) {
+						normalizeEvent(sourceEvents[i]);
+						sourceEvents[i].source = source;
+					}
+					events = events.concat(sourceEvents);
+				}
 				if (!--queued) {
 					if (callback) {
 						callback(events);
 					}
 				}
-			}, i=0;
-		for (; i<eventSources.length; i++) {
-			fetchEventSource(eventSources[i], sourceDone);
+			}
+		}
+		for (var i=0; i<sources.length; i++) {
+			_fetchEventSource(sources[i], sourceDone);
 		}
 	}
 	
 	
 	// Fetch from a particular source. Append to the 'events' array
-	function fetchEventSource(src, callback) {
+	/*
+	function _fetchEventSource(src, callback) {
 		var prevView = getView(),
 			prevDate = getDate(),
 			reportEvents = function(a,src) {
@@ -140,6 +159,15 @@ function EventManager(options, eventSources) {
 					loadingSrc[obj.src] = 0;
 				popLoading();
 			};
+	*/
+	function _fetchEventSource(src, callback) {
+		function reportEvents(a) {
+			callback(src, a);
+		}
+		function reportEventsAndPop(a) {
+			reportEvents(a);
+			popLoading();
+		}
 		if (typeof src == 'string') {
 			loadingSrc[src] = 1 + (loadingSrc[src]||0);
 			var params = {};
@@ -157,9 +185,9 @@ function EventManager(options, eventSources) {
 				dataType: 'json',
 				data: params,
 				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
-				success: reportEventsAndPop,
+				success: reportEventsAndPop/*,
 				beforeSend: ajaxBeforeFetch,
-				complete: ajaxAfterFetch
+				complete: ajaxAfterFetch*/
 			});
 		}
 		else if ($.isFunction(src)) {
@@ -169,6 +197,11 @@ function EventManager(options, eventSources) {
 		else if (src) {
 			reportEvents(src,src); // src is an array (sticky events)
 		}
+	}
+	
+	
+	function fetchEventSource(src, callback) {
+		fetchEventSources([src], callback);
 	}
 	
 	
