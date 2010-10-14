@@ -33,7 +33,7 @@ function EventManager(options, eventSources) {
 	var events = [];
 	var loadingLevel = 0;
 	
-	var loadingSrc = {};
+	
 	
 	/* Sources
 	-----------------------------------------------------------------------------*/
@@ -118,48 +118,6 @@ function EventManager(options, eventSources) {
 	}
 	
 	
-	// Fetch from a particular source. Append to the 'events' array
-	/*
-	function _fetchEventSource(src, callback) {
-		var prevView = getView(),
-			prevDate = getDate(),
-			reportEvents = function(a,src) {
-				//if (prevView == getView() && +prevDate == +getDate() && // protects from fast switching
-				if ($.inArray(src, eventSources) != -1) {               // makes sure source hasn't been removed
-						for (var i=0; i<a.length; i++) {
-							normalizeEvent(a[i]);
-							a[i].source = src;
-						}
-						events = events.concat(a);
-						if (callback) {
-							callback(a);
-						}
-					}
-			},
-			reportEventsAndPop = function(a,st,obj) {
-				if (obj && obj.src && loadingSrc[obj.src]) {
-					loadingSrc[obj.src] = 0;
-					reportEvents(a,obj.src);
-				} else if (!obj) {
-					//function
-					reportEvents(a,src);
-					popLoading();
-				}
-			},
-			ajaxBeforeFetch = function(obj) {
-				//prevent double requests
-				if (loadingSrc[src] > 1)
-					return false;
-				//attach source to xmlhttp request
-				obj.src = src;
-				pushLoading();
-			},
-			ajaxAfterFetch = function(obj) {
-				if (obj.src)
-					loadingSrc[obj.src] = 0;
-				popLoading();
-			};
-	*/
 	function _fetchEventSource(src, callback) {
 		function reportEvents(a) {
 			callback(src, a);
@@ -169,7 +127,6 @@ function EventManager(options, eventSources) {
 			popLoading();
 		}
 		if (typeof src == 'string') {
-			loadingSrc[src] = 1 + (loadingSrc[src]||0);
 			var params = {};
 			params[options.startParam] = Math.round(eventStart.getTime() / 1000);
 			params[options.endParam] = Math.round(eventEnd.getTime() / 1000);
@@ -177,6 +134,7 @@ function EventManager(options, eventSources) {
 			if (options.cacheParam) {
 				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 			}
+			pushLoading();
 			// TODO: respect cache param in ajaxSetup
 			$.ajax({
 				url: src,
@@ -185,9 +143,7 @@ function EventManager(options, eventSources) {
 				dataType: 'json',
 				data: params,
 				cache: options.cacheParam || false, // don't let jquery prevent caching if cacheParam is being used
-				success: reportEventsAndPop/*,
-				beforeSend: ajaxBeforeFetch,
-				complete: ajaxAfterFetch*/
+				success: reportEventsAndPop
 			});
 		}
 		else if ($.isFunction(src)) {
@@ -195,7 +151,7 @@ function EventManager(options, eventSources) {
 			src(cloneDate(eventStart), cloneDate(eventEnd), reportEventsAndPop);
 		}
 		else if (src) {
-			reportEvents(src,src); // src is an array (sticky events)
+			reportEvents(src); // src is an array (sticky events)
 		}
 	}
 	
@@ -214,6 +170,8 @@ function EventManager(options, eventSources) {
 		var view = getView();
 		return !eventStart || view.visStart < eventStart || view.visEnd > eventEnd;
 	}
+	
+	
 	
 	/* Manipulation
 	-----------------------------------------------------------------------------*/
@@ -244,6 +202,7 @@ function EventManager(options, eventSources) {
 				e.allDay = event.allDay;
 				e.className = event.className;
 				e.editable = event.editable;
+				
 				e.resizable = event.resizable;
 				e.color = event.color;
 				e.bgColor = event.bgColor;
