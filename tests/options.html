@@ -12,9 +12,9 @@
 	$(document).ready(function() {
 		$('#calendar').fullCalendar({
 		
-			//year: 2011,
-			//month: 2,
-			//date: 1,
+			year: 2011,
+			month: 0,
+			date: 4,
 			
 			/*
 			//previous bug, should NOT be march
@@ -23,7 +23,7 @@
 			date: 15,
 			*/
 			
-			//defaultView: 'month',
+			defaultView: 'agendaWeek',
 			
 			selectable: true,
 			selectHelper: true,
@@ -53,6 +53,8 @@
 			firstHour: 10,
 			slotMinutes: 15,
 			defaultEventMinutes: 45,
+			weekNumbers: true,
+			firstDay: 1,
 			//axisFormat: "Hmm",
 			
 			//allDayDefault: false,
@@ -69,13 +71,15 @@
 			
 			timeFormat: "h(:mm)[T]{ - h(:mm)T}",
 			//timeFormat: { agendaWeek: "'YO'" },
-			
+
+			columnFormat: "ddd d/M Ww",
+
 			minTime: 5,
 			maxTime: '10:45pm',
 			//dayClick: function(date) {
 			//	console.log(date);
 			//},
-			isRTL: true,
+			isRTL: false,
 			
 			events: [
 				{

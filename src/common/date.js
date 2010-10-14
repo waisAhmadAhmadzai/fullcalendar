@@ -362,7 +362,23 @@ var dateFormatters = {
 			return 'th';
 		}
 		return ['st', 'nd', 'rd'][date%10-1] || 'th';
-	}
+	},
+	w	: function(d,options)	{ return d.getWeek(options).toString(); }
 };
 
+if (Date.prototype.getWeek === undefined) {
+
+	Date.prototype.getWeek = function(opt) {
+		opt = opt || defaults;
+		
+		//1st week of year always contains 4th Jan or 28 Dec (ISO )
+		var jan4 = new Date(this.getFullYear(),0,4);
+
+		//ISO weeks numbers begins on monday, so rotate sunday to 6
+		var fDay = (jan4.getDay() - 1 + 7) % 7;
+
+		return Math.ceil( (((this - jan4) / 86400000) + (fDay+1) ) / 7 ) || 53;
+	}
+
+}
 
