@@ -10,7 +10,8 @@ see http://code.google.com/p/joomla-gcalendar/ and maintained by tanguy.pruvot@g
 This fork also adds :
 	- different colors for each event.
 	- resizable for each event
-	- IE9 public beta compatibility 
+	- IE9 public beta compatibility (with jQuery < 1.4.3 too)
+	- Week Numbers in Week and Day views
 
 Development and testing
 -----------------------
