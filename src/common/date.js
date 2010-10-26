@@ -359,32 +359,34 @@ if (Date.prototype.getWeek === undefined) {
 
 	Date.prototype.getWeek = function() {
 		//By tanguy.pruvot at gmail.com (2010)
+		var week, days, jan4, jan4Day, thisDay, msDay = 86400000;
 
-		//first week of year always contains 4th Jan, or 28 Dec (ISO)
-		var jan4  = new Date(this.getFullYear(),0,4 ,this.getHours());
+		//first week of year always contains 4th Jan (ISO)
+		jan4 = new Date(this.getFullYear(),0,4 ,this.getHours());
+		days = Math.round( (this - jan4) / msDay);
 
-		//ISO weeks numbers begins on monday, so rotate monday:sunday to 0:6
-		var jan4Day = (jan4.getDay() - 1 + 7) % 7;
+		//ISO weeks begins on monday, so rotate monday:sunday to 0:6
+		jan4Day = (jan4.getDay() + 6) % 7;
 
-		var days = Math.round((this - jan4) / 86400000);
-		var week = Math.floor((days + jan4Day ) / 7)+1;
+		week = Math.floor( (days + jan4Day) / 7) + 1;
 
 		//special cases
-		var thisDay = (this.getDay() - 1 + 7) % 7;
-		if (this.getMonth()==11 && this.getDate() >= 28) {
-			
-			jan4  = new Date(this.getFullYear()+1,0,4 ,this.getHours());
-			jan4Day = (jan4.getDay() - 1 + 7) % 7;
-			
-			if (thisDay < jan4Day) return 1;
-			
-			var prevWeek = new Date(this.valueOf()-(86400000*7));
-			return prevWeek.getWeek() + 1;
+		thisDay = (this.getDay() + 6) % 7;
+		if (this.getMonth() == 11 && this.getDate() >= 28) {
+
+			jan4.setFullYear( this.getFullYear() + 1 );
+			jan4Day = (jan4.getDay() + 6) % 7;
+
+			if (thisDay < jan4Day)
+				return 1;
+
+			var prevWeek = new Date( this-(msDay*7) );
+			week = prevWeek.getWeek() + 1;
 		}
-		
-		if (week == 0 && thisDay > 3 && this.getMonth()==0) {
-			var prevWeek = new Date(this.valueOf()-(86400000*7));
-			return prevWeek.getWeek() + 1;
+
+		if (week === 0 && thisDay > 3 && this.getMonth() == 0) {
+			var prevWeek = new Date( this-(msDay*7) );
+			week = prevWeek.getWeek() + 1;
 		}
 
 		return week;
