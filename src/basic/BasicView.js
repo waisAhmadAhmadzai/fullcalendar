@@ -300,7 +300,7 @@ function BasicView(element, calendar, viewName) {
 	
 	function dayClick(ev) {
 		if (!opt('selectable')) { // SelectionManager will worry about dayClick
-			var n = parseInt(this.className.match(/fc\-day(\d+)/)[1]),
+			var n = parseInt(this.className.match(/fc\-day(\d+)/)[1],10),
 				date = addDays(
 					cloneDate(t.visStart),
 					Math.floor(n/colCnt) * 7 + n % colCnt

@@ -378,7 +378,7 @@ function AgendaView(element, calendar, viewName) {
 				date = addDays(cloneDate(t.visStart), col*dis+dit),
 				rowMatch = this.className.match(/fc-slot(\d+)/);
 			if (rowMatch) {
-				var mins = parseInt(rowMatch[1]) * opt('slotMinutes'),
+				var mins = parseInt(rowMatch[1],10) * opt('slotMinutes'),
 					hours = Math.floor(mins/60);
 				date.setHours(hours);
 				date.setMinutes(mins%60 + minMinute);
