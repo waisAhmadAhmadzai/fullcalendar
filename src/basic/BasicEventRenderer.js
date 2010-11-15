@@ -5,6 +5,7 @@ function BasicEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
+	t.compileDaySegs = compileSegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.bindDaySeg = bindDaySeg;
 	
@@ -52,21 +53,16 @@ function BasicEventRenderer() {
 			d1 = cloneDate(t.visStart),
 			d2 = addDays(cloneDate(d1), colCnt),
 			visEventsEnds = $.map(events, exclEndDay),
-			i, row,
-			j, level,
-			k, seg,
+			i,
+			rowSegs,
+			j,
 			segs=[];
 		for (i=0; i<rowCnt; i++) {
-			row = stackSegs(sliceSegs(events, visEventsEnds, d1, d2));
-			for (j=0; j<row.length; j++) {
-				level = row[j];
-				for (k=0; k<level.length; k++) {
-					seg = level[k];
-					seg.row = i;
-					seg.level = j;
-					segs.push(seg);
-				}
+			rowSegs = sliceSegs(events, visEventsEnds, d1, d2);
+			for (j=0; j<rowSegs.length; j++) {
+				rowSegs[j].row = i;
 			}
+			segs = segs.concat(rowSegs);
 			addDays(d1, 7);
 			addDays(d2, 7);
 		}
@@ -79,7 +75,7 @@ function BasicEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement);
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}

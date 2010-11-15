@@ -5,6 +5,7 @@ function AgendaEventRenderer() {
 	
 	// exports
 	t.renderEvents = renderEvents;
+	t.compileDaySegs = compileDaySegs; // for DayEventRenderer
 	t.clearEvents = clearEvents;
 	t.slotSegHtml = slotSegHtml;
 	t.bindDaySeg = bindDaySeg;
@@ -78,18 +79,10 @@ function AgendaEventRenderer() {
 	
 	
 	function compileDaySegs(events) {
-		var levels = stackSegs(sliceSegs(events, $.map(events, exclEndDay), t.visStart, t.visEnd)),
-			i, levelCnt=levels.length, level,
-			j, seg,
-			segs=[];
-		for (i=0; i<levelCnt; i++) {
-			level = levels[i];
-			for (j=0; j<level.length; j++) {
-				seg = level[j];
-				seg.row = 0;
-				seg.level = i;
-				segs.push(seg);
-			}
+		var segs = sliceSegs(events, $.map(events, exclEndDay), t.visStart, t.visEnd),
+			i;
+		for (i=0; i<segs.length; i++) {
+			segs[i].row = 0;
 		}
 		return segs;
 	}
@@ -307,7 +300,7 @@ function AgendaEventRenderer() {
 		if (event.editable || event.editable === undefined && opt('editable')) {
 			draggableDayEvent(event, eventElement, seg.isStart);
 			if (seg.isEnd) {
-				resizableDayEvent(event, eventElement, getColWidth());
+				resizableDayEvent(event, eventElement, seg);
 			}
 		}
 	}

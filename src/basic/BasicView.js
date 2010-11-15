@@ -25,6 +25,7 @@ function BasicView(element, calendar, viewName) {
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
 	t.dayOfWeekCol = dayOfWeekCol;
+	t.dateCell = dateCell;
 	t.cellDate = cellDate;
 	t.cellIsAllDay = function() { return true };
 	t.allDayTR = allDayTR;
@@ -361,7 +362,7 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function renderSelection(startDate, endDate, allDay) {
-		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true);
+		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
 	
 	
@@ -453,7 +454,15 @@ function BasicView(element, calendar, viewName) {
 	
 	
 	function dayOfWeekCol(dayOfWeek) {
-		return (dayOfWeek - Math.max(firstDay,nwe)+colCnt) % colCnt;
+		return (dayOfWeek - Math.max(firstDay, nwe) + colCnt) % colCnt;
+	}
+	
+	
+	function dateCell(date) {
+		return {
+			row: Math.floor(dayDiff(date, t.visStart) / 7),
+			col: dayOfWeekCol(date.getDay())*dis + dit
+		};
 	}
 	
 	

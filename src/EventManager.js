@@ -37,9 +37,12 @@ function EventManager(options, sources) {
 	
 	/* Fetching
 	-----------------------------------------------------------------------------*/
+	
+	
 	function isFetchNeeded(start, end) {
 		return !rangeStart || start < rangeStart || end > rangeEnd;
 	}
+	
 	
 	function fetchEvents(start, end) {
 		rangeStart = start;
@@ -76,7 +79,6 @@ function EventManager(options, sources) {
 			params[options.startParam] = Math.round(rangeStart.getTime() / 1000);
 			params[options.endParam] = Math.round(rangeEnd.getTime() / 1000);
 			params['browserTimezone'] = rangeStart.getTimezoneOffset();
-
 			if (options.cacheParam) {
 				params[options.cacheParam] = (new Date()).getTime(); // TODO: deprecate cacheParam
 			}
@@ -139,7 +141,7 @@ function EventManager(options, sources) {
 		reportEvents(cache);
 	}
 	
-	
+
 	//to add some, then refetchEvents()
 	function addEventSourceFast(source) {
 		if (sources.indexOf(source) < 0) {
@@ -147,7 +149,7 @@ function EventManager(options, sources) {
 			pendingSourceCnt++;
 		}
 	}
-	
+
 	
 	function clearEventSources() {
 		var sticky = [];
