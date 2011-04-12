@@ -18,6 +18,9 @@
 				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
 			},
 			editable: true,
+			//isRTL: true,
+			year: 2011,
+			month: 0,
 			events: [
 				{
 					title: 'All Day Event',
@@ -86,6 +89,8 @@
 </style>
 </head>
 <body>
+<button onclick="$('#calendar').fullCalendar('removeEvents')">removeEvents</button>
+<button onclick="$('#calendar').fullCalendar('renderEvent', { title:'hey', start:'2011-01-09' }, true)">addEvent (with stick)</button>
 <div id='calendar'></div>
 </body>
 </html>
