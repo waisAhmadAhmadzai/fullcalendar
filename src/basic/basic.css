@@ -49,21 +49,43 @@
 	float: right;
 	}
 	
-/*year view*/
-.fc-year-main-table{
-	border-spacing: 5px;
-}
-.fc-year-monthly-td
-{
-	border: thin #0f0f0f solid;
-}
+/* year view */
 
-.fc-year-monthly-header{
-	border: thin #f0f0f0 solid;
-}
+.fc-year-main-table {
+	border-spacing: 5px;
+	border-right: thin solid #dddddd;
+	border-bottom: thin solid #dddddd;
+	}
+
+.fc-year-monthly-td {
+	padding-top: 16px;
+	text-align: center;
+	border-top: thin solid #dddddd;
+	border-left: thin solid #dddddd;
+	}
+
+.fc-year-monthly-header {
+	border: thin solid #dddddd;
+	}
 
 .fc-view-year .fc-event-inner {
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	}
+
+a.fc-year-monthly-name {
+	margin-top: 16px;
+	color: black;
+	text-shadow: rgba(0, 0, 0, 0.2) 0px 3px 2px;
+	font-size: 20px;
+	font-weight: bold;
+	text-decoration: none;
+	}
+
+.fc-year-main-table td.fc-first {
+	border-left: none;
 }
-	
+
+.fc-year-main-table td.fc-last {
+	border-right: none;
+}

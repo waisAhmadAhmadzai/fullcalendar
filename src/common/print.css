@@ -29,8 +29,8 @@
 	display: none !important;
 	}
 	
-.fc-year-monthly-name {
-	color: #000;
+a.fc-year-monthly-name {
+	color: black;
 	text-decoration: none;
-}
+	}
 

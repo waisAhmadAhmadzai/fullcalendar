@@ -163,7 +163,7 @@ function BasicYearView(element, calendar, viewName) {
 		rowCnt = 0;
 		var localWeekNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 		var localMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-		s = "<table class='fc-border-separate fc-year-main-table' style='width:100%'><tr>";
+		s = '<table class="fc-border-separate fc-year-main-table" style="width:100%;"><tr>';
 		for (var m=0; m<12; m++) {
 			var mi = (m+firstMonth)%12;
 			var miYear = di.getFullYear() + ((m+firstMonth)/12)|0;
@@ -173,18 +173,20 @@ function BasicYearView(element, calendar, viewName) {
 			di.setFullYear(miYear,mi, -1 * dowFirst+1);
 			if (m%monthsPerRow==0 && m > 0) s+="</tr><tr>";
 
-			s +="<td class='fc-year-monthly-td'>";
-			s +="<table class='fc-border-separate' style='width:100%' cellspacing='0'>"+
-				"<thead>"+
-				"<tr><td colspan='7' class='fc-year-monthly-header' />" + 
-					"<a data-year='" + di.getFullYear()+"' data-month='"+mi+"' class='fc-year-monthly-name' href=\"#\">"+localMonthNames[mi]+"</a></td></tr>"+
-				"<tr>";
+			s +='<td class="fc-year-monthly-td">';
+			s +='<table class="fc-border-separate" style="width:100%" cellspacing="0">'+
+				'<thead>'+
+				'<tr><td colspan="7" class="fc-year-monthly-header" />' + 
+					'<a data-year="'+di.getFullYear()+'" data-month="'+mi+'" class="fc-year-monthly-name" href="#">' +
+					localMonthNames[mi] + '</a>' +
+				'</td></tr>' +
+				'<tr>';
 
 			for (i=firstDay; i<colCnt+firstDay; i++) {
 				// need fc- for setDayID
-				s +="<th class='fc-year-month-weekly-head' width=\""+((100/colCnt)|0)+"%\">"+ localWeekNames[i%7]+"</th>";
+				s += '<th class="fc-year-month-weekly-head" width="'+((100/colCnt)|0)+'%">'+ localWeekNames[i%7]+'</th>';
 			}
-			s += "</tr>" + "</thead>" + "<tbody>";
+			s += '</tr></thead><tbody>';
 
 			rowsForMonth[mi] = 0;
 			for (i=0; i<6; i++) {
@@ -198,54 +200,47 @@ function BasicYearView(element, calendar, viewName) {
 				rowsForMonth[mi]++;
 				rowCnt++;
 
-				s +="<tr class='fc-week" + i + "'>";
+				s += '<tr class="fc-week' + i + '">';
 				for (j=0; j<colCnt; j++) {
 					if(di.getMonth()== mi) {
 						dayStr=formatDate(di, '-yyyy-MM-dd');
 					} else {
-						dayStr="";
+						dayStr='';
 					}
-					s +="<td class='fc- " + contentClass + " fc-day" + dayStr + "'>" + // need fc- for setDayID
-						"<div>" +
-					(showNumbers ?
-						"<div class='fc-day-number'/>" :
-						''
-					) +
-					"<div class='fc-day-content' style='min-height:20px'>" +
-					"<div style='position:relative;'></div>" +
-					"</div>" +
-					"</div>" +
-					"</td>";
+					s += '<td class="'+contentClass+' fc-day' + dayStr + '">' + // need fc- for setDayID
+					'<div>' +
+						(showNumbers ? '<div class="fc-day-number"/>' : '') +
+						'<div class="fc-day-content" style="min-height:20px;">' +
+							'<div style="position:relative;"></div>' +
+						'</div>' +
+					'</div>' +
+					'</td>';
 					addDays(di, 1);
 				}
 				if (nwe) {
 					skipWeekend(di);
 				}
-				s +="</tr>";
+				s += '</tr>';
 			}
-			s +="</tbody>" +
-				"</table>";
-			s+="</td>";
+			s += '</tbody></table>';
+			s += '</td>';
 		}
-		s+="</tr></table>";
+		s += '</tr></table>';
 		table = $(s).appendTo(element);
 		head = table.find('thead');
 		headCells = head.find('th.fc-year-month-weekly-head');
 
-		//mainBody = table.find('tbody table');
+		bodyRows = table.find('table tbody tr');
+		bodyCells = bodyRows.find('td').not('.fc-year-monthly-td');
+		bodyFirstCells = bodyCells.filter(':first-child');
+
 		subTables = table.find('table');
 
-		//subTables.each( function(x, _sub){
-		//});
-
-
-		bodyRows = table.find('table tbody tr');
-		bodyCells = table.find('tbody').find('td').not('.fc-year-monthly-td');
-		bodyFirstCells = bodyCells.filter(':first-child');
-		bodyCellTopInners = bodyRows.eq(0).find('div.fc-day-content div');
+		bodyCellTopInners = subTables.find('tbody .fc-week0 .fc-day-content div');
+		bodyCellTopInners.addClass('fc-first-month-week');
 
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
-		markFirstLast(bodyRows); // marks first+last td's
+		markFirstLast(bodyRows);
 
 		table.find('.fc-year-monthly-name').click(function() {
 			calendar.gotoDate($(this).attr('data-year'), $(this).attr('data-month'), 1);
@@ -253,7 +248,7 @@ function BasicYearView(element, calendar, viewName) {
 		});
 
 		dayBind(bodyCells);
-		daySegmentContainer = $("<div style='position:absolute;z-index:8;top:0;left:0'/>").appendTo(element);
+		daySegmentContainer = $('<div style="position:absolute;z-index:8;top:0;left:0;"/>').appendTo(element);
 	}
 
 	function updateCells(firstTime) {
@@ -305,7 +300,7 @@ function BasicYearView(element, calendar, viewName) {
 					}
 					var $div = cell.find('div.fc-day-number');
 					$div.text(d.getDate()); 
-					$div.parent().parent().attr('class', "fc-widget-content fc-day" + dayStr);
+					$div.parent().parent().addClass("fc-day" + dayStr);
 
 					if (d.getMonth() == mi) { lastDateShown = d.getDate(); }
 					addDays(d, 1);
@@ -586,12 +581,12 @@ function BasicYearView(element, calendar, viewName) {
 
 	function colContentLeft(col, gridOffset) {
 		var grid = tableByOffset(gridOffset);
-		return colContentPositions.left(col) + grid.position().left - 10;
+		return colContentPositions.left(col) + grid.position().left - 1;
 	}
 
 	function colContentRight(col, gridOffset) {
 		var grid = tableByOffset(gridOffset);
-		return colContentPositions.right(col) + grid.position().left - 10;
+		return colContentPositions.right(col) + grid.position().left - 1;
 	}
 
 	function colLeft(col, gridOffset) {
