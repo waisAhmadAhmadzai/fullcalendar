@@ -133,6 +133,8 @@ function BasicYearView(element, calendar, viewName) {
 		} else {
 			clearEvents();
 		}
+		var year = formatDate(t.start, 'yyyy');
+		$('a.fc-year-monthly-name').attr('data-year', year);
 		updateCells(firstTime);
 	}
 
@@ -185,7 +187,7 @@ function BasicYearView(element, calendar, viewName) {
 			s +='<table class="fc-border-separate" style="width:100%" cellspacing="0">'+
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' + 
-					'<a data-year="'+di.getFullYear()+'" data-month="'+mi+'" class="fc-year-monthly-name" href="#">' +
+					'<a data-month="'+mi+'" class="fc-year-monthly-name" href="#">' +
 					htmlEscape(monthName) + '</a>' +
 				'</td></tr>' +
 				'<tr>';
