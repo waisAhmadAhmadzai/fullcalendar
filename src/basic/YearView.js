@@ -60,9 +60,9 @@ function BasicYearView(element, calendar, viewName) {
 	t.colRight = colRight;
 	t.dayOfWeekCol = dayOfWeekCol;
 	t.dateCell = dateCell;
-	t.cellIsAllDay = function() { return true };
 	t.allDayRow = allDayRow;
 	t.allDayBounds = allDayBounds;
+	t.getIsCellAllDay = function() { return true };
 	t.getRowCnt = function() { return rowCnt; };
 	t.getColCnt = function() { return colCnt; };
 	t.getColWidth = function() { return colWidth; };
@@ -105,6 +105,7 @@ function BasicYearView(element, calendar, viewName) {
 
 	var rowCnt, colCnt;
 	var coordinateGrids = [];
+	var coordinateGrid;
 	var hoverListener;
 	var colContentPositions;
 	var otherMonthDays = [];
@@ -299,8 +300,7 @@ function BasicYearView(element, calendar, viewName) {
 						cell.removeClass(tm + '-state-highlight fc-today');
 					}
 					var $div = cell.find('div.fc-day-number');
-					$div.text(d.getDate()); 
-					$div.parent().parent().addClass("fc-day" + dayStr);
+					$div.text(d.getDate());
 
 					if (d.getMonth() == mi) { lastDateShown = d.getDate(); }
 					addDays(d, 1);
@@ -418,6 +418,8 @@ function BasicYearView(element, calendar, viewName) {
 	}
 
 	function renderSelection(startDate, endDate, allDay) {
+		var m = startDate.getMonth();
+		coordinateGrid = coordinateGrids[m];
 		renderDayOverlay(startDate, addDays(cloneDate(endDate), 1), true); // rebuild every time???
 	}
 

@@ -16,13 +16,14 @@
 		var y = date.getFullYear();
 		
 		$('#calendar').fullCalendar({
-			editable: false,
+			editable: true,
+			selectable: true,
 			header: {
 				left: 'prev,next',
 				center: 'title',
 				right: 'year,month,agendaWeek'
 			},
-			defaultView: 'month',
+			defaultView: 'year',
 			events: [
 				{
 					title: 'All Day Event',
