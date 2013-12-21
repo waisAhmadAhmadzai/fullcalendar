@@ -453,12 +453,13 @@ function BasicYearView(element, calendar, viewName) {
 	}
 
 	function dayOffsetToCellOffset(dayOffset) {
-		var offset = 0 - otherMonthDays[0][0];
+		var decal = otherMonthDays[0][0];
+		var offset = 0 - decal;
 		for (var i = 0; i < 12; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
 
-			if (dayOffset < moDays) {
+			if (dayOffset < moDays + decal || (i==11 && dayOffset < cellsForMonth(i) + decal)) {
 				offset += otherMonthDays[i][0]; //days in other month at beginning of month;
 				var di = cloneDate(t.visStart);
 				addMonths(di, i);
@@ -476,6 +477,10 @@ function BasicYearView(element, calendar, viewName) {
 				return offset;
 			}
 			dayOffset -= moDays;
+			if (i == 11) {
+				// on last month, allow overflow
+				return (offset + moDays + dayOffset);
+			}
 			offset += cellsForMonth(i);
 		}
 	}
