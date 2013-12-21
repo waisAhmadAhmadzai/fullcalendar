@@ -192,7 +192,7 @@ function BasicYearView(element, calendar, viewName) {
 
 			for (i=firstDay; i<colCnt+firstDay; i++) {
 				// need fc- for setDayID
-				s += '<th class="fc-year-month-weekly-head fc-widget-header" width="'+((100/colCnt)|0)+'%">'+
+				s += '<th class="fc-year-month-weekly-head fc-'+dayIDs[i%7]+' fc-widget-header" width="'+((100/colCnt)|0)+'%">'+
 				 localWeekNames[i%7]+'</th>';
 			}
 			s += '</tr></thead><tbody>';
@@ -216,7 +216,7 @@ function BasicYearView(element, calendar, viewName) {
 					} else {
 						dayStr='';
 					}
-					s += '<td class="'+contentClass+' fc-day'+dayStr + '">' + // need fc- for setDayID
+					s += '<td class="'+contentClass+' fc-day fc-'+dayIDs[di.getDay()]+' fc-day'+dayStr + '">' + // need fc- for setDayID
 					'<div>' +
 						(showNumbers ? '<div class="fc-day-number"/>' : '') +
 						'<div class="fc-day-content" style="min-height:20px;">' +
