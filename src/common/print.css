@@ -34,3 +34,6 @@ a.fc-year-monthly-name {
 	text-decoration: none;
 	}
 
+span.fc-button {
+	display: none;
+	}
