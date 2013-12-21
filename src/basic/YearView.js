@@ -441,7 +441,7 @@ function BasicYearView(element, calendar, viewName) {
 	}
 
 	function dayOffsetToCellOffset(dayOffset) {
-		var offset = 0;
+		var offset = 0 - otherMonthDays[0][0];
 		for (var i = 0; i < 12; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
