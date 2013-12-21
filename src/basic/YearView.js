@@ -232,6 +232,7 @@ function BasicYearView(element, calendar, viewName) {
 				s += '</tr>';
 			}
 			s += '</tbody></table>';
+			s += '<div class="fc-year-monthly-footer"></div>';
 			s += '</td>';
 		}
 		s += '</tr></table>';
@@ -244,9 +245,10 @@ function BasicYearView(element, calendar, viewName) {
 		bodyFirstCells = bodyCells.filter(':first-child');
 
 		subTables = table.find('table');
+		subTables.find('tbody .fc-week0').addClass('fc-first');
+		subTables.find('tbody > tr:last').addClass('fc-last');
 
 		bodyCellTopInners = subTables.find('tbody .fc-week0 .fc-day-content div');
-		bodyCellTopInners.addClass('fc-first-month-week');
 
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
 		markFirstLast(bodyRows);

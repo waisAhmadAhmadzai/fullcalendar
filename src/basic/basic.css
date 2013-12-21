@@ -58,10 +58,13 @@
 	}
 
 .fc-year-monthly-td {
-	padding-top: 16px;
 	text-align: center;
 	border-top: thin solid #dddddd;
 	border-left: thin solid #dddddd;
+	}
+
+.fc-year-monthly-footer {
+	min-height:18px;
 	}
 
 .fc-year-monthly-header {
@@ -82,10 +85,6 @@ a.fc-year-monthly-name {
 	font-weight: bold;
 	text-decoration: none;
 	}
-
-.fc-year-main-table th.fc-year-month-weekly-head {
-	border-bottom: none;
-}
 
 .fc-year-main-table .fc-first {
 	border-left: none;
