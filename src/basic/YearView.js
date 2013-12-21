@@ -162,7 +162,13 @@ function BasicYearView(element, calendar, viewName) {
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
 
 		rowCnt = 0;
-		var localWeekNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+		var localWeekNames = [];
+		// init days based on 2013-12 (1st is Sunday)
+		for (var m=0; m<7; m++) {
+			di.setFullYear(2013,11,1+m);
+			localWeekNames[m] = formatDate(di, 'ddd');
+		}
+		di = cloneDate(t.start);
 		s = '<table class="fc-border-separate fc-year-main-table" style="width:100%;"><tr>';
 		for (var m=0; m<12; m++) {
 			var mi = (m+firstMonth)%12;
@@ -186,7 +192,8 @@ function BasicYearView(element, calendar, viewName) {
 
 			for (i=firstDay; i<colCnt+firstDay; i++) {
 				// need fc- for setDayID
-				s += '<th class="fc-year-month-weekly-head" width="'+((100/colCnt)|0)+'%">'+ localWeekNames[i%7]+'</th>';
+				s += '<th class="fc-year-month-weekly-head fc-widget-header" width="'+((100/colCnt)|0)+'%">'+
+				 localWeekNames[i%7]+'</th>';
 			}
 			s += '</tr></thead><tbody>';
 

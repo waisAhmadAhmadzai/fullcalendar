@@ -66,6 +66,7 @@
 
 .fc-year-monthly-header {
 	border: thin solid #dddddd;
+	border-bottom: none;
 	}
 
 .fc-view-year .fc-event-inner {
@@ -76,16 +77,20 @@
 a.fc-year-monthly-name {
 	margin-top: 16px;
 	color: black;
-	text-shadow: rgba(0, 0, 0, 0.2) 0px 3px 2px;
-	font-size: 20px;
+	text-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px;
+	font-size: 16px;
 	font-weight: bold;
 	text-decoration: none;
 	}
 
-.fc-year-main-table td.fc-first {
+.fc-year-main-table th.fc-year-month-weekly-head {
+	border-bottom: none;
+}
+
+.fc-year-main-table .fc-first {
 	border-left: none;
 }
 
-.fc-year-main-table td.fc-last {
+.fc-year-main-table .fc-last {
 	border-right: none;
 }
