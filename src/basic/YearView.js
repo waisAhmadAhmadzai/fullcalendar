@@ -183,6 +183,10 @@ function BasicYearView(element, calendar, viewName) {
 			di.setFullYear(miYear,mi, -1 * dowFirst+1);
 			if (m%monthsPerRow==0 && m > 0) s+="</tr><tr>";
 
+			if (m%monthsPerRow < monthsPerRow && m%monthsPerRow) {
+				s +='<td class="fc-year-month-separator"></td>';
+			}
+
 			s +='<td class="fc-year-monthly-td">';
 			s +='<table class="fc-border-separate" style="width:100%" cellspacing="0">'+
 				'<thead>'+

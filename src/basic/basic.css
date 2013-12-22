@@ -53,14 +53,19 @@
 
 .fc-year-main-table {
 	border-spacing: 5px;
-	border-right: thin solid #dddddd;
-	border-bottom: thin solid #dddddd;
+	/*border-right: thin solid #dddddd;
+	border-bottom: thin solid #dddddd;*/
 	}
 
 .fc-year-monthly-td {
 	text-align: center;
-	border-top: thin solid #dddddd;
-	border-left: thin solid #dddddd;
+	/*border-top: thin solid #dddddd;
+	border-left: thin solid #dddddd;*/
+	}
+
+.fc-year-month-separator {
+	/*border-left: thin solid #dddddd;*/
+	width: 8px;
 	}
 
 .fc-year-monthly-footer {
@@ -80,16 +85,16 @@
 a.fc-year-monthly-name {
 	margin-top: 16px;
 	color: black;
-	text-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px;
-	font-size: 16px;
+	/*text-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px;*/
+	font-size: 15px;
 	font-weight: bold;
 	text-decoration: none;
 	}
 
 .fc-year-main-table .fc-first {
-	border-left: none;
+	/*border-left: none;*/
 }
 
 .fc-year-main-table .fc-last {
-	border-right: none;
+	/*border-right: none;*/
 }
