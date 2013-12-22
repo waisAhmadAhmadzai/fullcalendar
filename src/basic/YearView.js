@@ -133,8 +133,7 @@ function BasicYearView(element, calendar, viewName) {
 		} else {
 			clearEvents();
 		}
-		var year = formatDate(t.start, 'yyyy');
-		$('a.fc-year-monthly-name').attr('data-year', year);
+		$('a.fc-year-monthly-name').attr('data-year', t.start.getFullYear());
 		updateCells(firstTime);
 	}
 
@@ -162,6 +161,7 @@ function BasicYearView(element, calendar, viewName) {
 		var dayStr;
 		var di = cloneDate(t.start);
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
+		var lastMonth = t.end.getMonth();
 
 		rowCnt = 0;
 		var localWeekNames = [];
@@ -172,7 +172,7 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		di = cloneDate(t.start);
 		s = '<table class="fc-border-separate fc-year-main-table" style="width:100%;"><tr>';
-		for (var m=0; m<12; m++) {
+		for (var m=0; m<=lastMonth; m++) {
 			var mi = (m+firstMonth)%12;
 			var miYear = di.getFullYear() + ((m+firstMonth)/12)|0;
 			di.setFullYear(miYear,mi,1);
@@ -455,11 +455,12 @@ function BasicYearView(element, calendar, viewName) {
 	function dayOffsetToCellOffset(dayOffset) {
 		var decal = otherMonthDays[0][0];
 		var offset = 0 - decal;
-		for (var i = 0; i < 12; i++) {
+		var lastMonth = t.end.getMonth();
+		for (var i=0; i<=lastMonth; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
 
-			if (dayOffset < moDays + decal || (i==11 && dayOffset < cellsForMonth(i) + decal)) {
+			if (dayOffset < moDays + decal || (i==lastMonth && dayOffset < cellsForMonth(i) + decal)) {
 				offset += otherMonthDays[i][0]; //days in other month at beginning of month;
 				var di = cloneDate(t.visStart);
 				addMonths(di, i);
@@ -477,7 +478,7 @@ function BasicYearView(element, calendar, viewName) {
 				return offset;
 			}
 			dayOffset -= moDays;
-			if (i == 11) {
+			if (i == lastMonth) {
 				// on last month, allow overflow
 				return (offset + moDays + dayOffset);
 			}
@@ -511,7 +512,8 @@ function BasicYearView(element, calendar, viewName) {
 
 	function cellOffsetToDayOffset(cellOffset) {
 		var offset = otherMonthDays[0][0];
-		for (var i = 0; i < 12; i++) {
+		var lastMonth = t.end.getMonth();
+		for (var i=0; i<=lastMonth; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
 			var moCellDays = cellsForMonth(i);
@@ -548,7 +550,8 @@ function BasicYearView(element, calendar, viewName) {
 
 	function rowToGridOffset(row) {
 		var cnt = 0;
-		for (var i = 0; i < 12; i++) {
+		var lastMonth = t.end.getMonth();
+		for (var i=0; i<=lastMonth; i++) {
 			cnt += rowsForMonth[i];
 			if (row < cnt) { return i; }
 		}
