@@ -114,6 +114,7 @@ function BasicYearView(element, calendar, viewName) {
 	var rtl, dis, dit;
 	var firstDay;
 	var firstMonth;
+	var lastMonth;
 	var nwe;
 	var tm;
 	var colFormat;
@@ -148,6 +149,7 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		firstDay = opt('firstDay');
 		firstMonth = opt('firstMonth') || 0;
+		lastMonth = t.end.getMonth();
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
@@ -161,7 +163,6 @@ function BasicYearView(element, calendar, viewName) {
 		var dayStr;
 		var di = cloneDate(t.start);
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
-		var lastMonth = t.end.getMonth();
 
 		rowCnt = 0;
 		var localWeekNames = [];
@@ -304,7 +305,7 @@ function BasicYearView(element, calendar, viewName) {
 					} else {
 						cell.addClass('fc-other-month');
 						dayStr="";
-						if ((d.getMonth() == mi-1) || (mi == 0 && d.getMonth() == 11)) {
+						if ((d.getMonth() == mi-1) || (mi == 0 && d.getMonth() == lastMonth)) {
 							otherMonthDays[i][0]++;
 						} else {
 							otherMonthDays[i][1]++;
@@ -459,7 +460,6 @@ function BasicYearView(element, calendar, viewName) {
 	function dayOffsetToCellOffset(dayOffset) {
 		var decal = otherMonthDays[0][0];
 		var offset = 0 - decal;
-		var lastMonth = t.end.getMonth();
 		for (var i=0; i<=lastMonth; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
@@ -516,7 +516,6 @@ function BasicYearView(element, calendar, viewName) {
 
 	function cellOffsetToDayOffset(cellOffset) {
 		var offset = otherMonthDays[0][0];
-		var lastMonth = t.end.getMonth();
 		for (var i=0; i<=lastMonth; i++) {
 			var mo = (i + firstMonth)%12+1;
 			var moDays = daysInMonth(t.curYear.getYear(), mo);
@@ -554,7 +553,6 @@ function BasicYearView(element, calendar, viewName) {
 
 	function rowToGridOffset(row) {
 		var cnt = 0;
-		var lastMonth = t.end.getMonth();
 		for (var i=0; i<=lastMonth; i++) {
 			cnt += rowsForMonth[i];
 			if (row < cnt) { return i; }
@@ -607,12 +605,12 @@ function BasicYearView(element, calendar, viewName) {
 
 	function colContentLeft(col, gridOffset) {
 		var grid = tableByOffset(gridOffset);
-		return colContentPositions.left(col) + grid.position().left - 1;
+		return colContentPositions.left(col) + grid.position().left;
 	}
 
 	function colContentRight(col, gridOffset) {
 		var grid = tableByOffset(gridOffset);
-		return colContentPositions.right(col) + grid.position().left - 1;
+		return colContentPositions.right(col) + grid.position().left;
 	}
 
 	function colLeft(col, gridOffset) {
