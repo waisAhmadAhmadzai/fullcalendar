@@ -134,7 +134,6 @@ function BasicYearView(element, calendar, viewName) {
 			table.remove();
 		}
 		buildSkeleton(maxr, showNumbers);
-		$('a.fc-year-monthly-name').attr('data-year', t.start.getFullYear());
 		updateCells();
 	}
 
@@ -191,9 +190,11 @@ function BasicYearView(element, calendar, viewName) {
 			s +='<td class="fc-year-monthly-td">';
 			s +='<table class="fc-border-separate" style="width:100%" cellspacing="0">'+
 				'<thead>'+
-				'<tr><td colspan="7" class="fc-year-monthly-header" />' + 
-					'<a data-month="'+mi+'" class="fc-year-monthly-name" href="#">' +
+				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
+					'<div class="fc-year-monthly-name">' +
+					'<a data-year="'+t.start.getFullYear()+'" data-month="'+mi+'" href="#">' +
 					htmlEscape(monthName) + '</a>' +
+					'</div>' +
 				'</td></tr>' +
 				'<tr>';
 
@@ -260,7 +261,7 @@ function BasicYearView(element, calendar, viewName) {
 		markFirstLast(head.add(head.find('tr'))); // marks first+last tr/th's
 		markFirstLast(bodyRows);
 
-		table.find('.fc-year-monthly-name').click(function() {
+		table.find('.fc-year-monthly-name a').click(function() {
 			calendar.gotoDate($(this).attr('data-year'), $(this).attr('data-month'), 1);
 			calendar.changeView('month');
 		});
