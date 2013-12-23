@@ -481,11 +481,11 @@ function BasicYearView(element, calendar, viewName) {
 				}
 				return offset;
 			}
-			dayOffset -= moDays;
 			if (i == lastMonth) {
 				// on last month, allow overflow
-				return (offset + moDays + dayOffset);
+				return (offset + dayOffset);
 			}
+			dayOffset -= moDays;
 			offset += cellsForMonth(i);
 		}
 	}
