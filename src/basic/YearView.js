@@ -191,7 +191,7 @@ function BasicYearView(element, calendar, viewName) {
 			s +='<table class="fc-border-separate" style="width:100%" cellspacing="0">'+
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
-					'<div class="fc-year-monthly-name">' +
+					'<div class="fc-year-monthly-name'+(m<monthsPerRow ?' fc-first':'')+'">' +
 					'<a data-year="'+t.start.getFullYear()+'" data-month="'+mi+'" href="#">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +

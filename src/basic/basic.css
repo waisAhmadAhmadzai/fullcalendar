@@ -81,6 +81,10 @@
 	line-height: 24px;
 	}
 
+.fc-year-monthly-name.fc-first {
+	margin-top: 0;
+	}
+
 .fc-year-monthly-name a {
 	color: black;
 	font-size: 15px;
