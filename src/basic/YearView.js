@@ -129,13 +129,13 @@ function BasicYearView(element, calendar, viewName) {
 		colCnt = c;
 		updateOptions();
 		var firstTime = !table;
-		if (firstTime) {
-			buildSkeleton(maxr, showNumbers);
-		} else {
+		if (!firstTime) {
 			clearEvents();
+			table.remove();
 		}
+		buildSkeleton(maxr, showNumbers);
 		$('a.fc-year-monthly-name').attr('data-year', t.start.getFullYear());
-		updateCells(firstTime);
+		updateCells();
 	}
 
 	function updateOptions() {
@@ -269,12 +269,10 @@ function BasicYearView(element, calendar, viewName) {
 		daySegmentContainer = $('<div style="position:absolute;z-index:8;top:0;left:0;"/>').appendTo(element);
 	}
 
-	function updateCells(firstTime) {
+	function updateCells() {
 		var startYear = t.start.getFullYear();
 		var today = clearTime(new Date());
-		var cell;
-		var date;
-		var row;
+		var cell, date, row;
 
 		subTables.each(function(i, _sub) {
 			if (!t.curYear) t.curYear = t.start;
