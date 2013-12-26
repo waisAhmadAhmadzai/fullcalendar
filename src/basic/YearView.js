@@ -71,15 +71,19 @@ function BasicYearView(element, calendar, viewName) {
 	t.getDaySegmentContainer = function() { return daySegmentContainer; };
 	t.getRowMaxWidth = getRowMaxWidth;
 
-	// imports
 	View.call(t, element, calendar, viewName);
 	OverlayManager.call(t);
 	SelectionManager.call(t);
+
+	t.rangeToSegments = rangeToSegmentsYear;
 	BasicEventRenderer.call(t);
+
 	t.rowToGridOffset = rowToGridOffset;
 	t.dayOffsetToCellOffset = dayOffsetToCellOffset;
 	t.cellToCellOffset = cellToCellOffset;
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
+
+	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
 	var clearEvents = t.clearEvents;
@@ -477,6 +481,7 @@ function BasicYearView(element, calendar, viewName) {
 		return rowsForMonth[i] * (nwe ? 5 : 7);
 	}
 
+	/* main function for event's position */
 	function dayOffsetToCellOffset(dOffset) {
 		var i, j, offset = 0;
 		var dayOffset = dOffset - otherMonthDays[firstMonth][0];
@@ -530,6 +535,7 @@ function BasicYearView(element, calendar, viewName) {
 		return offset;
 	}
 
+	/* handle selectable days clicks */
 	function cellOffsetToDayOffset(cellOffset) {
 		var offset = otherMonthDays[firstMonth][0];
 		for (var i=firstMonth; i<=lastMonth; i++) {
@@ -555,6 +561,83 @@ function BasicYearView(element, calendar, viewName) {
 			cellOffset -= moCellDays;
 			offset += moDays;
 		}
+	}
+
+	// required to fix events on last month day
+	function rangeToSegmentsYear(startDate, endDate) {
+		var rowCnt = t.getRowCnt();
+		var colCnt = t.getColCnt();
+		var segments = []; // array of segments to return
+
+		// ignore events outside current view
+		if (endDate < t.visStart || startDate > t.visEnd) return segments;
+
+		// day offset for given date range
+		var rangeDayOffsetStart = t.dateToDayOffset(startDate);
+		var rangeDayOffsetEnd = t.dateToDayOffset(endDate); // exclusive
+		// first and last cell offset for the given date range
+		// "last" implies inclusivity
+		var rangeCellOffsetFirst = t.dayOffsetToCellOffset(rangeDayOffsetStart);
+		var rangeCellOffsetLast = t.dayOffsetToCellOffset(rangeDayOffsetEnd - 1);
+
+		var len = rangeDayOffsetEnd - rangeDayOffsetStart;
+		var isStart, isEnd = false;
+
+		// loop through all the rows in the view
+		for (var row=0; row<rowCnt; row++) {
+
+			var gridOffset = t.rowToGridOffset(row);
+
+			// first and last cell offset for the row
+			var rowCellOffsetFirst = row * colCnt;
+			var rowCellOffsetLast = rowCellOffsetFirst + colCnt - 1;
+
+			// get the segment's cell offsets by constraining the range's cell offsets to the bounds of the row
+			var segmentCellOffsetFirst = Math.max(rangeCellOffsetFirst, rowCellOffsetFirst);
+			var segmentCellOffsetLast = Math.min(rangeCellOffsetLast, rowCellOffsetLast);
+
+			// make sure segment's offsets are valid and in view
+			if (segmentCellOffsetFirst <= segmentCellOffsetLast) {
+
+				// translate to cells
+				var segmentCellFirst = t.cellOffsetToCell(segmentCellOffsetFirst);
+				var segmentCellLast = t.cellOffsetToCell(segmentCellOffsetLast);
+
+				// view might be RTL, so order by leftmost column
+				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort();
+
+				// Determine if segment's first/last cell is the beginning/end of the date range.
+				// We need to compare "day offset" because "cell offsets" are often ambiguous and
+				// can translate to multiple days, and an edge case reveals itself when we the
+				// range's first cell is hidden (we don't want isStart to be true).
+				isStart = t.cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
+				isEnd = t.cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd; // +1 for comparing exclusively
+
+				// check max len and hide unneeded segments at end of month
+				var skipHiddenWk = false;
+				if (Math.abs(cols[1]-cols[0]) >= len) {
+					skipHiddenWk = (!isEnd && !isStart);
+					isStart = true; isEnd = true;
+					if (segments.length)
+						cols[0] = cols[1] + 1 - len;
+					else
+						cols[1] = cols[0] - 1 + len;
+				}
+
+				// we could enhance this, hiding segments on hiddendays
+
+				if (!skipHiddenWk)
+					segments.push({
+						gridOffset: gridOffset,
+						row: row,
+						leftCol: cols[0],
+						rightCol: cols[1],
+						isStart: isStart,
+						isEnd: isEnd
+					});
+			}
+		}
+		return segments;
 	}
 
 	function daysInMonth(year, month) {
