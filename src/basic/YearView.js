@@ -491,15 +491,16 @@ function BasicYearView(element, calendar, viewName) {
 			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
 			var di = new Date(t.curYear.getFullYear(), i, 1);
 
-			if (dayOffset < moDays || (i==lastMonth && dayOffset < cellsForMonth(i))) {
+			if (dayOffset < moDays) {
 				offset += otherMonthDays[i][0]; //days in other month at beginning of month;
 
-				for (j = 1; j <= dayOffset; j++) {
+				for (j = 0; j < dayOffset; j++) {
 					if (!nwe || !isHiddenDay(di)) {
 						offset += 1;
 					}
 					addDays(di, 1);
 				}
+				console.log(offset);
 				return offset;
 			}
 			if (i == lastMonth) {
@@ -575,6 +576,18 @@ function BasicYearView(element, calendar, viewName) {
 		// day offset for given date range
 		var rangeDayOffsetStart = t.dateToDayOffset(startDate);
 		var rangeDayOffsetEnd = t.dateToDayOffset(endDate); // exclusive
+
+		// if ends in weekend, dont create a new segment
+		if (nwe) {
+			var realEnd = cloneDate(endDate);
+			addDays(realEnd,-1);
+			if (isHiddenDay(realEnd)) {
+				skipWeekend(realEnd,-1);
+				addDays(realEnd,1);
+				rangeDayOffsetEnd = t.dateToDayOffset(realEnd);
+			}
+		}
+
 		// first and last cell offset for the given date range
 		// "last" implies inclusivity
 		var rangeCellOffsetFirst = t.dayOffsetToCellOffset(rangeDayOffsetStart);
