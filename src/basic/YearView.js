@@ -500,7 +500,6 @@ function BasicYearView(element, calendar, viewName) {
 					}
 					addDays(di, 1);
 				}
-				console.log(offset);
 				return offset;
 			}
 			if (i == lastMonth) {
@@ -570,22 +569,21 @@ function BasicYearView(element, calendar, viewName) {
 		var colCnt = t.getColCnt();
 		var segments = []; // array of segments to return
 
+		var realEnd = cloneDate(endDate);
+		addDays(realEnd,-1);
+
 		// ignore events outside current view
-		if (endDate < t.visStart || startDate > t.visEnd) return segments;
+		if (realEnd < t.visStart || startDate > t.visEnd) return segments;
 
 		// day offset for given date range
 		var rangeDayOffsetStart = t.dateToDayOffset(startDate);
 		var rangeDayOffsetEnd = t.dateToDayOffset(endDate); // exclusive
 
 		// if ends in weekend, dont create a new segment
-		if (nwe) {
-			var realEnd = cloneDate(endDate);
-			addDays(realEnd,-1);
-			if (isHiddenDay(realEnd)) {
-				skipWeekend(realEnd,-1);
-				addDays(realEnd,1);
-				rangeDayOffsetEnd = t.dateToDayOffset(realEnd);
-			}
+		if (nwe && isHiddenDay(realEnd)) {
+			skipWeekend(realEnd,-1);
+			addDays(realEnd,1);
+			rangeDayOffsetEnd = t.dateToDayOffset(realEnd);
 		}
 
 		// first and last cell offset for the given date range
