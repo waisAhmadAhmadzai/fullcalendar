@@ -335,6 +335,12 @@ function BasicYearView(element, calendar, viewName) {
 					if (+d == +today && d.getMonth() == i) {
 						cell.addClass(tm + '-state-highlight fc-today');
 					}
+					else if (d < today) {
+						cell.addClass('fc-past');
+					}
+					else {
+						cell.addClass('fc-future');
+					}
 					var $div = cell.find('div.fc-day-number');
 					$div.text(d.getDate());
 
