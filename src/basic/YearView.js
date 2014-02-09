@@ -18,10 +18,10 @@ function YearView(element, calendar) {
 		}
 		var start = cloneDate(date, true);
 		var firstMonth = opt('firstMonth') || 0;
-		var lastMonth = opt('lastMonth') || 11;
+		var lastMonth = opt('lastMonth') || firstMonth+11;
 		start.setFullYear(start.getFullYear(),firstMonth,1);
 		var end = cloneDate(date);
-		end.setFullYear(end.getFullYear(), lastMonth+1, 0);
+		end.setFullYear(end.getFullYear(), lastMonth, 0);
 
 		var visStart = cloneDate(start); //set startDay
 		var firstDay = opt('firstDay');
@@ -156,7 +156,7 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		firstDay = opt('firstDay');
 		firstMonth = opt('firstMonth') || 0;
-		lastMonth = opt('lastMonth') || 11;
+		lastMonth = opt('lastMonth') || firstMonth+11;
 		yearCellMinH = opt('yearCellMinH') || 20;
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
@@ -170,6 +170,7 @@ function BasicYearView(element, calendar, viewName) {
 		var i, j, m, n, monthsRow = 0;
 		var dayStr;
 		var di = cloneDate(t.start);
+		var miYear = di.getFullYear();
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
 
 		rowCnt = 0;
@@ -184,7 +185,6 @@ function BasicYearView(element, calendar, viewName) {
 		s+= '<td class="fc-year-month-border fc-first"></td>';
 		n = 0;
 		for (m=firstMonth; m<=lastMonth; m++) {
-			var miYear = di.getFullYear() + (m/12)|0;
 			di.setFullYear(miYear,m,1);
 			var monthName = formatDate(di, 'MMMM');
 
@@ -209,7 +209,7 @@ function BasicYearView(element, calendar, viewName) {
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
 					'<div class="fc-year-monthly-name'+(monthsRow==0 ?' fc-first':'')+'">' +
-					'<a data-year="'+t.start.getFullYear()+'" data-month="'+m+'" href="#">' +
+					'<a data-year="'+di.getFullYear()+'" data-month="'+(m%12)+'" href="#">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +
 				'</td></tr>' +
@@ -236,7 +236,7 @@ function BasicYearView(element, calendar, viewName) {
 
 				s += '<tr class="fc-week' + i + '">';
 				for (j=0; j<colCnt; j++) {
-					if (di.getMonth()== m) {
+					if (di.getMonth() == (m%12)) {
 						dayStr=formatDate(di, '-yyyy-MM-dd');
 					} else {
 						dayStr='';
@@ -301,8 +301,8 @@ function BasicYearView(element, calendar, viewName) {
 			if (!t.curYear) t.curYear = t.start;
 
 			var d = cloneDate(t.curYear);
-			var miYear = d.getFullYear() + ((i+firstMonth)/12);
-			var mi = (i+firstMonth)%12;
+			var miYear = d.getFullYear();
+			var mi = i+firstMonth;
 
 			d.setFullYear(miYear, mi, 1);
 			if (nwe) { skipWeekend(d); }
@@ -322,7 +322,7 @@ function BasicYearView(element, calendar, viewName) {
 
 					cell = $(_cell);
 
-					if (d.getMonth() != mi) {
+					if (d.getMonth() != mi%12) {
 						cell.addClass('fc-other-month');
 						if (d.getMonth() == (mi+11)%12) {
 							// prev month
@@ -393,7 +393,7 @@ function BasicYearView(element, calendar, viewName) {
 
 		var rowStart = cloneDate(t.visStart);
 		var row = 0;
-		var offset = overlayStart.getMonth() - firstMonth;
+		var offset = (overlayStart.getMonth() - t.start.getMonth() + 12) % 12;
 		coordinateGrid = coordinateGrids[offset];
 		if (refreshCoordinateGrid) {
 			coordinateGrid.build();
@@ -401,9 +401,10 @@ function BasicYearView(element, calendar, viewName) {
 
 		subTables.each(function(m, _sub) {
 			var d = cloneDate(t.curYear);
-			var mo = (m+firstMonth)%12;
-			var moYear = d.getFullYear()+((m+firstMonth)/12)|0;
+			var mo = m+firstMonth;
+			var moYear = d.getFullYear();
 			d.setFullYear(moYear,mo,1);
+
 			if (nwe) { skipWeekend(d); }
 			var dowFirst = (d.getDay()+7-firstDay)%7;
 			d.setFullYear(moYear,mo, -1 * dowFirst+1);
@@ -414,7 +415,7 @@ function BasicYearView(element, calendar, viewName) {
 
 				var curCols = colCnt;
 				var rowStart = cloneDate(d);
-				while (rowStart.getMonth() != mo) {
+				while (rowStart.getMonth() != mo%12) {
 					addDays(rowStart, 1);
 					curCols--;
 				}
@@ -642,7 +643,6 @@ function BasicYearView(element, calendar, viewName) {
 				}
 
 				// we could enhance this, hiding segments on hiddendays
-
 				if (!skipHiddenWk)
 					segments.push({
 						gridOffset: gridOffset,
