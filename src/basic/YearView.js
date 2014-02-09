@@ -167,8 +167,8 @@ function BasicYearView(element, calendar, viewName) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
-		var i, j, m, n, monthsRow = 0;
-		var dayStr;
+		var i, j, m, n, y, monthsRow = 0;
+		var monthName, dayStr;
 		var di = cloneDate(t.start);
 		var miYear = di.getFullYear();
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
@@ -186,7 +186,8 @@ function BasicYearView(element, calendar, viewName) {
 		n = 0;
 		for (m=firstMonth; m<=lastMonth; m++) {
 			di.setFullYear(miYear,m,1);
-			var monthName = formatDate(di, 'MMMM');
+			y = di.getFullYear();
+			monthName = formatDate(di, 'MMMM');
 
 			if (nwe) { skipWeekend(di); }
 			var dowFirst = (di.getDay()+7-firstDay)%7;
@@ -209,7 +210,7 @@ function BasicYearView(element, calendar, viewName) {
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
 					'<div class="fc-year-monthly-name'+(monthsRow==0 ?' fc-first':'')+'">' +
-					'<a data-year="'+di.getFullYear()+'" data-month="'+(m%12)+'" href="#">' +
+					'<a data-year="'+y+'" data-month="'+(m%12)+'" href="#">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +
 				'</td></tr>' +
