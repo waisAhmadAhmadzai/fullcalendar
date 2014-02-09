@@ -13,12 +13,18 @@ function YearView(element, calendar) {
 	var formatDate = calendar.formatDate;
 
 	function render(date, delta) {
+		var firstMonth = opt('firstMonth') || 0;
+		var lastMonth = opt('lastMonth') || firstMonth+11;
+		var dateRange = cloneDate(date, true);
+		dateRange.setFullYear(date.getFullYear(),lastMonth+1,0);
 		if (delta) {
 			t.curYear = addYears(date, delta);
 		}
+		// for school years month to year navigation
+		else if (firstMonth > 0 && date.getMonth() <= dateRange.getMonth()) {
+			t.curYear = addYears(date, -1);
+		}
 		var start = cloneDate(date, true);
-		var firstMonth = opt('firstMonth') || 0;
-		var lastMonth = opt('lastMonth') || firstMonth+11;
 		start.setFullYear(start.getFullYear(),firstMonth,1);
 		var end = cloneDate(date);
 		end.setFullYear(end.getFullYear(), lastMonth, 0);
@@ -282,8 +288,8 @@ function BasicYearView(element, calendar, viewName) {
 		markFirstLast(bodyRows);
 
 		table.find('.fc-year-monthly-name a').click(function() {
-			calendar.gotoDate($(this).attr('data-year'), $(this).attr('data-month'), 1);
 			calendar.changeView('month');
+			calendar.gotoDate($(this).attr('data-year'), $(this).attr('data-month'), 1);
 		});
 
 		dayBind(bodyCells);
