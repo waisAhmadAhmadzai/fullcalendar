@@ -14,9 +14,10 @@ function YearView(element, calendar) {
 
 	function render(date, delta) {
 		var firstMonth = opt('firstMonth') || 0;
-		var lastMonth = opt('lastMonth') || firstMonth+11;
+		var lastMonth = opt('lastMonth') || firstMonth+12;
+		var nbMonths = lastMonth - firstMonth;
 		var dateRange = cloneDate(date, true);
-		dateRange.setFullYear(date.getFullYear(),lastMonth+1,0);
+		dateRange.setFullYear(date.getFullYear(),lastMonth,0);
 		if (delta) {
 			t.curYear = addYears(date, delta);
 		}
@@ -39,6 +40,9 @@ function YearView(element, calendar) {
 		colAndRow = '3x4'; //TODO support '2x6', '3x4', '4x3' 3 types
 
 		t.title = formatDate(start, opt('titleFormat'));
+		if (firstMonth + nbMonths > 12) {
+			t.title += ' - '+formatDate(end, opt('titleFormat'));
+		}
 		t.start = start;
 		t.end = end;
 		t.visStart = visStart;
@@ -162,7 +166,7 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		firstDay = opt('firstDay');
 		firstMonth = opt('firstMonth') || 0;
-		lastMonth = opt('lastMonth') || firstMonth+11;
+		lastMonth = opt('lastMonth') || firstMonth+12;
 		yearCellMinH = opt('yearCellMinH') || 20;
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
@@ -178,6 +182,7 @@ function BasicYearView(element, calendar, viewName) {
 		var di = cloneDate(t.start);
 		var miYear = di.getFullYear();
 		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
+		var nbMonths=lastMonth-firstMonth;
 
 		rowCnt = 0;
 		var localWeekNames = [];
@@ -190,10 +195,13 @@ function BasicYearView(element, calendar, viewName) {
 		s = '<table class="fc-year-main-table fc-border-separate" style="width:100%;"><tr>';
 		s+= '<td class="fc-year-month-border fc-first"></td>';
 		n = 0;
-		for (m=firstMonth; m<=lastMonth; m++) {
+		for (m=firstMonth; m<lastMonth; m++) {
 			di.setFullYear(miYear,m,1);
 			y = di.getFullYear();
 			monthName = formatDate(di, 'MMMM');
+			if (firstMonth + nbMonths > 12) {
+				monthName = monthName + ' ' + y;
+			}
 
 			if (nwe) { skipWeekend(di); }
 			var dowFirst = (di.getDay()+7-firstDay)%7;
@@ -500,7 +508,7 @@ function BasicYearView(element, calendar, viewName) {
 		var i, j, offset = 0;
 		var dayOffset = dOffset - otherMonthDays[firstMonth][0];
 
-		for (i=firstMonth; i<=lastMonth; i++) {
+		for (i=firstMonth; i<lastMonth; i++) {
 
 			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
 			var di = new Date(t.curYear.getFullYear(), i, 1);
@@ -552,7 +560,7 @@ function BasicYearView(element, calendar, viewName) {
 	/* handle selectable days clicks */
 	function cellOffsetToDayOffset(cellOffset) {
 		var offset = otherMonthDays[firstMonth][0];
-		for (var i=firstMonth; i<=lastMonth; i++) {
+		for (var i=firstMonth; i<lastMonth; i++) {
 			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
 			var moCellDays = cellsForMonth(i);
 			if (cellOffset < moCellDays) {
@@ -670,7 +678,7 @@ function BasicYearView(element, calendar, viewName) {
 
 	function rowToGridOffset(row) {
 		var cnt = 0;
-		for (var i=firstMonth; i<=lastMonth; i++) {
+		for (var i=firstMonth; i<lastMonth; i++) {
 			cnt += rowsForMonth[i];
 			if (row < cnt) { return i-firstMonth; }
 		}
@@ -687,7 +695,7 @@ function BasicYearView(element, calendar, viewName) {
 
 	function buildCoordGrids() {
 		var nums = [];
-		for (var i=firstMonth; i<=lastMonth; i++) {
+		for (var i=firstMonth; i<lastMonth; i++) {
 			nums.push(i);
 		}
 		coordinateGrids = [];
