@@ -337,7 +337,7 @@ function BasicYearView(element, calendar, viewName) {
 			otherMonthDays[mi] = [0,0,0,0];
 			$(_sub).find('tbody > tr').each(function(iii, _tr) {
 				if (nwe) { skipWeekend(d); }
-				if (iii == 0 && d.getMonth() == mi) {
+				if (iii == 0 && dateInMonth(d,mi) ) {
 					// in current month, but hidden (weekends) at start
 					otherMonthDays[mi][2] = d.getDate()-1;
 				}
@@ -345,7 +345,7 @@ function BasicYearView(element, calendar, viewName) {
 
 					cell = $(_cell);
 
-					if (d.getMonth() != mi%12) {
+					if (!dateInMonth(d,mi)) {
 						cell.addClass('fc-other-month');
 						if (d.getMonth() == (mi+11)%12) {
 							// prev month
@@ -363,7 +363,7 @@ function BasicYearView(element, calendar, viewName) {
 					var $div = cell.find('div.fc-day-number');
 					$div.text(d.getDate());
 
-					if (d.getMonth() == mi) { lastDateShown = d.getDate(); }
+					if (dateInMonth(d,mi)) lastDateShown = d.getDate();
 					addDays(d, 1);
 				});
 				if (nwe) { skipWeekend(d); }
@@ -678,6 +678,11 @@ function BasicYearView(element, calendar, viewName) {
 
 	function daysInMonth(year, month) {
 		return new Date(year, month, 0).getDate();
+	}
+
+	function dateInMonth(date, mi) {
+		var y = date.getFullYear() - t.start.getFullYear();
+		return (date.getMonth() == mi-(y*12));
 	}
 
 	function rowToGridOffset(row) {
