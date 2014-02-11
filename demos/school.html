@@ -25,8 +25,9 @@
 			},
 			defaultView: 'year',
 			firstDay: 1,
-			firstMonth: 8,
-			//lastMonth: 8+24,
+			firstMonth: 8, // september y
+			//hiddenMonths: [8+11], // hide august
+			//lastMonth: 9+12, // september y+1
 			weekends: true,
 			minDate: new Date(y-5, 8, 1),
 			events: [
@@ -38,8 +39,14 @@
 				},
 				{
 					title: 'End of year',
-					start: new Date(y, 7, 3),
-					end: new Date(y, 7, 5),
+					start: new Date(y, 7, 2),
+					end: new Date(y, 7, 3),
+					allDay: true
+				},
+				{
+					title: 'Next season',
+					start: new Date(y, 8, 3),
+					end: new Date(y, 8, 5),
 					allDay: true
 				},
 				{

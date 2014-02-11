@@ -131,6 +131,7 @@ function BasicYearView(element, calendar, viewName) {
 	var firstDay;
 	var firstMonth;
 	var lastMonth;
+	var hiddenMonths;
 	var nwe;
 	var tm;
 	var colFormat;
@@ -168,6 +169,7 @@ function BasicYearView(element, calendar, viewName) {
 		firstMonth = opt('firstMonth') || 0;
 		lastMonth = opt('lastMonth') || firstMonth+12;
 		yearCellMinH = opt('yearCellMinH') || 20;
+		hiddenMonths = opt('hiddenMonths') || [];
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
 		colFormat = opt('columnFormat');
@@ -193,9 +195,13 @@ function BasicYearView(element, calendar, viewName) {
 		}
 		di = cloneDate(t.start);
 		s = '<table class="fc-year-main-table fc-border-separate" style="width:100%;"><tr>';
-		s+= '<td class="fc-year-month-border fc-first"></td>';
+		s += '<td class="fc-year-month-border fc-first"></td>';
 		n = 0;
 		for (m=firstMonth; m<lastMonth; m++) {
+
+			var hiddenMonth = ($.inArray(m,hiddenMonths) != -1);
+			var display = (hiddenMonth ? 'display:none;' : '');
+
 			di.setFullYear(miYear,m,1);
 			y = di.getFullYear();
 			monthName = formatDate(di, 'MMMM');
@@ -208,18 +214,18 @@ function BasicYearView(element, calendar, viewName) {
 			di.setFullYear(miYear,m, -1 * dowFirst+1);
 
 			// new month line
-			if (n%monthsPerRow==0 && n > 0) {
+			if (n%monthsPerRow==0 && n > 0 && !hiddenMonth) {
 				monthsRow++;
 				s+='<td class="fc-year-month-border fc-last"></td>'+
 					'</tr><tr>'+
 					'<td class="fc-year-month-border fc-first"></td>';
 			}
 
-			if (n%monthsPerRow < monthsPerRow && n%monthsPerRow > 0) {
+			if (n%monthsPerRow < monthsPerRow && n%monthsPerRow > 0 && !hiddenMonth) {
 				s +='<td class="fc-year-month-separator"></td>';
 			}
 
-			s +='<td class="fc-year-monthly-td">';
+			s +='<td class="fc-year-monthly-td" style="' + display + '">';
 			s +='<table class="fc-border-separate fc-year-month" style="width:100%;" cellspacing="0">'+
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
@@ -274,10 +280,12 @@ function BasicYearView(element, calendar, viewName) {
 			s += '</tbody></table>';
 			s += '<div class="fc-year-monthly-footer"></div>';
 			s += '</td>';
-			n++;
+
+			if (!hiddenMonth) n++;
 		}
 		s += '<td class="fc-year-month-border fc-last"></td>';
 		s += '</tr></table>';
+
 		table = $(s).appendTo(element);
 		head = table.find('thead');
 		headCells = head.find('th.fc-year-weekly-head');
