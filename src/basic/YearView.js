@@ -347,14 +347,10 @@ function BasicYearView(element, calendar, viewName) {
 							otherMonthDays[mi][1]++;
 						}
 					}
-					if (+d == +today && d.getMonth() == i) {
+					if (+d == +today) {
 						cell.addClass(tm + '-state-highlight fc-today');
-					}
-					else if (d < today) {
-						cell.addClass('fc-past');
-					}
-					else {
-						cell.addClass('fc-future');
+					} else {
+						cell.addClass((+d < +today) ? 'fc-past' : 'fc-future');
 					}
 					var $div = cell.find('div.fc-day-number');
 					$div.text(d.getDate());
