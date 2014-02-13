@@ -41,7 +41,7 @@ function YearView(element, calendar) {
 
 		t.title = formatDate(start, opt('titleFormat'));
 		if (firstMonth + nbMonths > 12) {
-			t.title += ' - '+formatDate(end, opt('titleFormat'));
+			t.title += formatDate(end, ' - yyyy');
 		}
 		t.start = start;
 		t.end = end;
@@ -660,6 +660,10 @@ function BasicYearView(element, calendar, viewName) {
 					else
 						cols[1] = cols[0] - 1 + len;
 				}
+
+				// segment in hidden month
+				if ($.inArray(firstMonth+gridOffset,hiddenMonths) != -1)
+					skipHiddenWk = true;
 
 				// we could enhance this, hiding segments on hiddendays
 				if (!skipHiddenWk)
