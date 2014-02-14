@@ -93,6 +93,9 @@ function BasicYearView(element, calendar, viewName) {
 	t.cellToCellOffset = cellToCellOffset;
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
 
+	t.dragStart = dragStart;
+	t.dragStop  = dragStop;
+
 	// imports
 	var opt = t.opt;
 	var trigger = t.trigger;
@@ -501,6 +504,28 @@ function BasicYearView(element, calendar, viewName) {
 	}
 
 
+	/* External Dragging
+	-----------------------------------------------------------------------*/
+	function dragStart(_dragElement, ev, ui) {
+		hoverListener.start(function(cell) {
+			clearOverlays();
+			if (cell) {
+				renderCellOverlay(cell.grid, cell.row, cell.col, cell.row, cell.col);
+			}
+		}, ev);
+	}
+
+	function dragStop(_dragElement, ev, ui) {
+		var cell = hoverListener.stop();
+		clearOverlays();
+		if (cell) {
+			var offset = cellToCellOffset(cell);
+			var dayOffset = cellOffsetToDayOffset(offset);
+			var d = dayOffsetToDate(dayOffset);
+			trigger('drop', _dragElement, d, true, ev, ui);
+		}
+	}
+
 	/* Utilities
 	--------------------------------------------------------*/
 	function cellsForMonth(i) {
@@ -587,6 +612,13 @@ function BasicYearView(element, calendar, viewName) {
 			cellOffset -= moCellDays;
 			offset += moDays;
 		}
+	}
+
+	// day offset -> date (JavaScript Date object)
+	function dayOffsetToDate(dayOffset) {
+		var date = cloneDate(t.visStart);
+		addDays(date, dayOffset);
+		return date;
 	}
 
 	// required to fix events on last month day
