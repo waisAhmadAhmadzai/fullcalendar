@@ -32,12 +32,12 @@ function YearView(element, calendar) {
 
 		var visStart = cloneDate(start);
 		var firstDay = opt('firstDay');
+		var monthsPerRow = opt('yearColumns') || 3; //ex: '2x6', '3x4', '4x3'
+		var nwe = opt('weekends') ? 0 : 1;
 
 		var visEnd = cloneDate(end);
-		var nwe = opt('weekends') ? 0 : 1;
 		addDays(visStart, -((visStart.getDay() - Math.max(firstDay, nwe) + 7) % 7));
 		addDays(visEnd, (7 - visEnd.getDay() + Math.max(firstDay, nwe)) % 7);
-		yearColumns = opt('yearColumns') || 3; //ex: '2x6', '3x4', '4x3'
 
 		t.title = formatDate(start, opt('titleFormat'));
 		if (firstMonth + nbMonths > 12) {
@@ -47,7 +47,7 @@ function YearView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderYear(yearColumns, 6, nwe ? 5 : 7, true);
+		renderYear(monthsPerRow, 6, nwe ? 5 : 7, true);
 	}
 }
 
@@ -145,8 +145,7 @@ function BasicYearView(element, calendar, viewName) {
 
 	disableTextSelection(element.addClass('fc-grid'));
 
-	function renderYear(cols, r, c, showNumbers) {
-		// rowCnt set by buildingskeleton
+	function renderYear(yearColumns, r, c, showNumbers) {
 		colCnt = c;
 		updateOptions();
 		buildCoordGrids();
@@ -155,7 +154,8 @@ function BasicYearView(element, calendar, viewName) {
 			clearEvents();
 			table.remove();
 		}
-		buildSkeleton(cols, showNumbers);
+		var monthsPerRow = parseInt(yearColumns,10); //"3x4" parses to 3
+		buildSkeleton(monthsPerRow, showNumbers);
 		updateCells();
 	}
 
@@ -178,7 +178,7 @@ function BasicYearView(element, calendar, viewName) {
 		colFormat = opt('columnFormat');
 	}
 
-	function buildSkeleton(maxColumns, showNumbers) {
+	function buildSkeleton(monthsPerRow, showNumbers) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
@@ -186,8 +186,7 @@ function BasicYearView(element, calendar, viewName) {
 		var monthName, dayStr;
 		var di = cloneDate(t.start);
 		var miYear = di.getFullYear();
-		var monthsPerRow = parseInt(maxColumns); //"3x4" parses to 3
-		var nbMonths=lastMonth-firstMonth;
+		var nbMonths = lastMonth-firstMonth;
 
 		rowCnt = 0;
 		var localWeekNames = [];

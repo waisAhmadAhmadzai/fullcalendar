@@ -78,16 +78,14 @@ function SelectionManager() {
 				clearSelection();
 				if (cell && getIsCellAllDay(cell)) {
 					dates = [ cellToDate(origCell), cellToDate(cell) ].sort(dateCompare);
-					
 					var minDate = opt('minDate');
 					var maxDate = opt('maxDate');
-					if((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
+					if ((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
 						abort = true;
 						return;
 					}
-					
 					renderSelection(dates[0], dates[1], true);
-				}else{
+				} else {
 					dates = null;
 				}
 			}, ev);

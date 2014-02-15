@@ -154,8 +154,8 @@ function Header(calendar, options) {
 		element.find('span.fc-button-' + buttonName)
 			.removeClass(tm + '-state-disabled');
 	}
-	
-	
+
+
 	function toggleEnable(buttonName, enabled) {
 		if(enabled) {
 			enableButton(buttonName);

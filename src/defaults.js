@@ -30,7 +30,7 @@ var defaults = {
 	// date restriction
 	minDate: null,
 	maxDate: null,
-	
+
 	// time formats
 	titleFormat: {
 		year: 'yyyy',

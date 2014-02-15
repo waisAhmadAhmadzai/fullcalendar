@@ -365,22 +365,20 @@ function Calendar(element, options, eventSources) {
 
 	function updateTodayButton() {
 		var today = new Date();
-		
 		header.toggleEnable('today', (today < currentView.start || today >= currentView.end));
 	}
-	
+
+
 	function updateNavigation() {
 		updateTodayButton();
-		
-		if(options.minDate) {
+		if (options.minDate) {
 			header.toggleEnable('prev', options.minDate < currentView.start);
 		}
-		
-		if(options.maxDate) {
+		if (options.maxDate) {
 			header.toggleEnable('next', options.maxDate > currentView.end);
 		}
 	}
-	
+
 
 
 	/* Selection

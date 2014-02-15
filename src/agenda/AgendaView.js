@@ -839,22 +839,20 @@ function AgendaView(element, calendar, viewName) {
 						d2,
 						addMinutes(cloneDate(d2), snapMinutes)
 					].sort(dateCompare);
-					
+
 					var minDate = opt('minDate');
 					var maxDate = opt('maxDate');
-					if((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
+					if ((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
 						abort = true;
 						return;
 					}
-					
 					renderSlotSelection(dates[0], dates[3]);
-				}else{
+				} else {
 					dates = null;
 				}
 			}, ev);
 			$(document).one('mouseup', function(ev) {
 				hoverListener.stop();
-				
 				if (!abort && dates) {
 					if (+dates[0] == +dates[1]) {
 						reportDayClick(dates[0], false, ev);
