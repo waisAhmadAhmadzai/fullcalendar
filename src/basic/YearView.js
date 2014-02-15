@@ -30,14 +30,14 @@ function YearView(element, calendar) {
 		var end = cloneDate(date);
 		end.setFullYear(end.getFullYear(), lastMonth, 0);
 
-		var visStart = cloneDate(start); //set startDay
+		var visStart = cloneDate(start);
 		var firstDay = opt('firstDay');
 
 		var visEnd = cloneDate(end);
 		var nwe = opt('weekends') ? 0 : 1;
 		addDays(visStart, -((visStart.getDay() - Math.max(firstDay, nwe) + 7) % 7));
 		addDays(visEnd, (7 - visEnd.getDay() + Math.max(firstDay, nwe)) % 7);
-		colAndRow = '3x4'; //TODO support '2x6', '3x4', '4x3' 3 types
+		yearColumns = opt('yearColumns') || 3; //ex: '2x6', '3x4', '4x3'
 
 		t.title = formatDate(start, opt('titleFormat'));
 		if (firstMonth + nbMonths > 12) {
@@ -47,7 +47,7 @@ function YearView(element, calendar) {
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
-		renderYear(colAndRow, 6, nwe ? 5 : 7, true);
+		renderYear(yearColumns, 6, nwe ? 5 : 7, true);
 	}
 }
 
@@ -145,7 +145,7 @@ function BasicYearView(element, calendar, viewName) {
 
 	disableTextSelection(element.addClass('fc-grid'));
 
-	function renderYear(maxr, r, c, showNumbers) {
+	function renderYear(cols, r, c, showNumbers) {
 		// rowCnt set by buildingskeleton
 		colCnt = c;
 		updateOptions();
@@ -155,7 +155,7 @@ function BasicYearView(element, calendar, viewName) {
 			clearEvents();
 			table.remove();
 		}
-		buildSkeleton(maxr, showNumbers);
+		buildSkeleton(cols, showNumbers);
 		updateCells();
 	}
 
@@ -178,7 +178,7 @@ function BasicYearView(element, calendar, viewName) {
 		colFormat = opt('columnFormat');
 	}
 
-	function buildSkeleton(maxRowCnt, showNumbers) {
+	function buildSkeleton(maxColumns, showNumbers) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
@@ -186,7 +186,7 @@ function BasicYearView(element, calendar, viewName) {
 		var monthName, dayStr;
 		var di = cloneDate(t.start);
 		var miYear = di.getFullYear();
-		var monthsPerRow = parseInt(maxRowCnt); //a bit hookey, "3x4" parses to 3
+		var monthsPerRow = parseInt(maxColumns); //"3x4" parses to 3
 		var nbMonths=lastMonth-firstMonth;
 
 		rowCnt = 0;
