@@ -415,7 +415,7 @@ function Calendar(element, instanceOptions) {
 		(currentView.afterRender || noop)();
 
 		updateTitle();
-		updateTodayButton();
+		updateNavigation();
 
 		trigger('viewRender', currentView, currentView, currentView.element);
 
@@ -568,14 +568,21 @@ function Calendar(element, instanceOptions) {
 
 	function updateTodayButton() {
 		var now = t.getNow();
-		if (now.isWithin(currentView.intervalStart, currentView.intervalEnd)) {
-			header.disableButton('today');
+		var enable = !(now.isWithin(currentView.intervalStart, currentView.intervalEnd));
+		header.toggleEnable('today', enable);
+	}
+
+
+	function updateNavigation() {
+		updateTodayButton();
+		if (options.minDate) {
+			header.toggleEnable('prev', options.minDate < currentView.intervalStart);
 		}
-		else {
-			header.enableButton('today');
+		if (options.maxDate) {
+			header.toggleEnable('next', options.maxDate > currentView.intervalEnd);
 		}
 	}
-	
+
 
 
 	/* Selection

@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "2.0.0-beta2",
+  "version": "2.0.0-beta2-year",
 
   "dependencies": {
     "jquery": "~1.10.2",
@@ -12,10 +12,10 @@
 
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
-  "keywords": [ "calendar", "event", "full-sized" ],
+  "keywords": [ "calendar", "event", "full-sized", "year" ],
 
   "homepage": "http://arshaw.com/fullcalendar/",
-  "demo": "http://arshaw.com/fullcalendar/",
+  "demo": "http://epsy.ath.cx/fullcalendar-yearview/demos/",
   "docs": "http://arshaw.com/fullcalendar/docs/",
   "download": "http://arshaw.com/fullcalendar/download/",
   "bugs": "http://code.google.com/p/fullcalendar/issues/list",
@@ -28,9 +28,10 @@
   ],
 
   "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+    "name": "Tanguy Pruvot",
+    "email": "tpruvot@github",
+    "url": "http://github.com/tpruvot/fullcalendar/"
   },
-  "copyright": "2013 Adam Shaw"
+
+  "copyright": "2013 Adam Shaw - 2014 Tanguy Pruvot"
 }

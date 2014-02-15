@@ -878,6 +878,7 @@ function AgendaView(element, calendar, viewName) {
 		if (ev.which == 1 && opt('selectable')) { // ev.which==1 means left mouse button
 			unselect(ev);
 			var dates;
+			var abort = false;
 			hoverListener.start(function(cell, origCell) {
 				clearSelection();
 				if (cell && cell.col == origCell.col && !getIsCellAllDay(cell)) {
@@ -889,14 +890,21 @@ function AgendaView(element, calendar, viewName) {
 						d2,
 						d2.clone().add(snapDuration)
 					].sort(dateCompare);
+
+					var minDate = opt('minDate');
+					var maxDate = opt('maxDate');
+					if ((minDate && dates[0] < minDate) || (maxDate && dates[1] >= maxDate)) {
+						abort = true;
+						return;
+					}
 					renderSlotSelection(dates[0], dates[3]);
-				}else{
+				} else {
 					dates = null;
 				}
 			}, ev);
 			$(document).one('mouseup', function(ev) {
 				hoverListener.stop();
-				if (dates) {
+				if (!abort && dates) {
 					if (+dates[0] == +dates[1]) {
 						reportDayClick(dates[0], ev);
 					}

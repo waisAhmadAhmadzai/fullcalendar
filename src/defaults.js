@@ -32,13 +32,19 @@ var defaults = {
 
 	//allDayDefault: undefined,
 	
+	// date restriction
+	minDate: null,
+	maxDate: null,
+
 	// time formats
 	titleFormat: {
+		year: 'YYYY',
 		month: 'MMMM YYYY', // like "September 1986". each language will override this
 		week: 'll', // like "Sep 4 1986"
 		day: 'LL' // like "September 4 1986"
 	},
 	columnFormat: {
+		year: 'MMMM',
 		month: 'ddd', // like "Sat"
 		week: generateWeekColumnFormat,
 		day: 'dddd' // like "Saturday"
@@ -55,6 +61,7 @@ var defaults = {
 		prevYear: "prev year",
 		nextYear: "next year",
 		today: 'today',
+		year: 'year',
 		month: 'month',
 		week: 'week',
 		day: 'day'

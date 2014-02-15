@@ -5,6 +5,17 @@ FullCalendar - Full-sized drag & drop event calendar
 This document describes how to modify or contribute to the FullCalendar project. If you are looking for end-developer documentation, please visit the [project homepage][fc-homepage].
 
 
+About this fork
+---------------
+
+This fork (tpruvot/fullcalendar) is based on arshow Fullcalendar v1.6.4 project.
+
+It implements an additional year view (12 months) and can be used to display vacations periods.
+
+The year table layout is customizable (2x6, 3x4, 4x3, 6x2), and the first month can be tuned to display school years.
+
+
+
 Getting Set Up
 --------------
 
