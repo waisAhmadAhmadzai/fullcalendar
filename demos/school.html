@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel='stylesheet' href='../demos/cupertino/theme.css' />
 <link href='../build/out/fullcalendar.css' rel='stylesheet' />
 <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/jquery/jquery.js'></script>
@@ -10,36 +9,58 @@
 <script>
 
 	$(document).ready(function() {
-	
+
 		var date = new Date();
 		var d = date.getDate();
 		var m = date.getMonth();
 		var y = date.getFullYear();
-		
+
 		$('#calendar').fullCalendar({
-
-			weekNumbers: true,
-			weekNumberTitle: 'Wk ',
-
-			//weekNumberCalculation: function(date) {
-			//	return date.getMonth(); // inappropriate. but just for testing
-			//},
-
-			firstDay: 1,
-			selectable: true,
-			//isRTL: true,
-			//theme: true,
-
 			editable: true,
+			selectable: true,
 			header: {
-				left: 'prev,next today',
+				left: 'prev,next',
 				center: 'title',
-				right: 'year,month,agendaWeek,basicWeek,agendaDay,basicDay'
+				right: 'year,month,agendaWeek'
 			},
+			defaultView: 'year',
+			yearColumns: 2,
+			//debug: true,
+			firstDay: 1,
+			firstMonth: 8, // september y
+			//hiddenMonths: [8+11], // hide august
+			//lastMonth: 9+12, // september y+1
+			//weekends: false, // buggy
+			//weekNumbers: true,
+			minDate: new Date(y-5, 8, 1),
 			events: [
 				{
+					title: 'Prev year',
+					start: new Date(y, -4, 3),
+					end: new Date(y, -4, 5),
+					allDay: true
+				},
+				{
+					title: 'End of year',
+					start: new Date(y, 7, 2),
+					end: new Date(y, 7, 3),
+					allDay: true
+				},
+				{
+					title: 'Next season',
+					start: new Date(y, 8, 3),
+					end: new Date(y, 8, 5),
+					allDay: true
+				},
+				{
+					title: 'Over weekend',
+					start: new Date(y, 0, 3),
+					end: new Date(y, 0, 5),
+					allDay: true
+				},
+				{
 					title: 'All Day Event',
-					start: new Date(y, m, 1)
+					start: new Date(y, 4, 31)
 				},
 				{
 					title: 'Long Event',
@@ -49,13 +70,13 @@
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
+					start: new Date(y, m+2, d-3, 16, 0),
 					allDay: false
 				},
 				{
 					id: 999,
 					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
+					start: new Date(y, m+2, d+4, 16, 0),
 					allDay: false
 				},
 				{
@@ -65,8 +86,8 @@
 				},
 				{
 					title: 'Lunch',
-					start: new Date(y, m, d, 12, 5),
-					end: new Date(y, m, d, 14, 43),
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
 					allDay: false
 				},
 				{
@@ -83,24 +104,21 @@
 				}
 			]
 		});
-		
 	});
 
 </script>
-<style>
+<style type="text/css">
+body {
+	margin-top: 40px;
+	text-align: center;
+	font-size: 14px;
+	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+}
 
-	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 13px;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
-
-	#calendar {
-		width: 900px;
-		margin: 0 auto;
-		}
-
+#calendar {
+	width: 950px;
+	margin: 0 auto;
+}
 </style>
 </head>
 <body>

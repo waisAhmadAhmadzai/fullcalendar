@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel='stylesheet' href='../demos/cupertino/theme.css' />
 <link href='../build/out/fullcalendar.css' rel='stylesheet' />
 <link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../lib/jquery/jquery.js'></script>
@@ -10,32 +9,23 @@
 <script>
 
 	$(document).ready(function() {
-	
+
 		var date = new Date();
 		var d = date.getDate();
 		var m = date.getMonth();
 		var y = date.getFullYear();
-		
+
 		$('#calendar').fullCalendar({
-
-			weekNumbers: true,
-			weekNumberTitle: 'Wk ',
-
-			//weekNumberCalculation: function(date) {
-			//	return date.getMonth(); // inappropriate. but just for testing
-			//},
-
-			firstDay: 1,
-			selectable: true,
-			//isRTL: true,
-			//theme: true,
-
 			editable: true,
+			selectable: true,
 			header: {
-				left: 'prev,next today',
+				left: 'prev,next',
 				center: 'title',
-				right: 'year,month,agendaWeek,basicWeek,agendaDay,basicDay'
+				right: 'year,month,agendaWeek'
 			},
+			defaultView: 'year',
+			//weekends: false,
+			firstDay: 0,
 			events: [
 				{
 					title: 'All Day Event',
@@ -65,8 +55,8 @@
 				},
 				{
 					title: 'Lunch',
-					start: new Date(y, m, d, 12, 5),
-					end: new Date(y, m, d, 14, 43),
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
 					allDay: false
 				},
 				{
@@ -83,24 +73,21 @@
 				}
 			]
 		});
-		
 	});
 
 </script>
-<style>
+<style type="text/css">
+body {
+	margin-top: 40px;
+	text-align: center;
+	font-size: 14px;
+	font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+}
 
-	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 13px;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
-
-	#calendar {
-		width: 900px;
-		margin: 0 auto;
-		}
-
+#calendar {
+	width: 950px;
+	margin: 0 auto;
+}
 </style>
 </head>
 <body>

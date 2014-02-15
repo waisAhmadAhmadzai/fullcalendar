@@ -1,3 +1,18 @@
+v1.6.4-yearview 1.7 (2014-02-23)
+--------------------------------
+
+- Support of a new 'year' view (draggable, themable, selectable)
+- yearColumns option to customize layout, default is 3(x4)
+- firstMonth option for school year month offset
+- lastMonth option to show more than 12 months
+- hiddenMonths option to hide months in year view
+- new options: minDate/maxDate for all views (John Bafford)
+
+Known issues:
+- hidden weekends option is not correctly implemented.
+
+Implementation by tpruvot@github, based on Tim Martin idea.
+
 
 v1.6.4 (2013-09-01)
 -------------------
