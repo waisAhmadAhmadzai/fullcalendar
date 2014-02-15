@@ -553,7 +553,7 @@ function BasicYearView(element, calendar, viewName) {
 				}
 				return offset;
 			}
-			if (i == lastMonth) {
+			if (i == lastMonth-1) {
 				// on last month, allow overflow
 				return (offset + dayOffset);
 			}
@@ -649,13 +649,10 @@ function BasicYearView(element, calendar, viewName) {
 		var rangeCellOffsetFirst = t.dayOffsetToCellOffset(rangeDayOffsetStart);
 		var rangeCellOffsetLast = t.dayOffsetToCellOffset(rangeDayOffsetEnd - 1);
 
-		var len = rangeDayOffsetEnd - rangeDayOffsetStart;
 		var isStart, isEnd = false;
 
 		// loop through all the rows in the view
 		for (var row=0; row<rowCnt; row++) {
-
-			var gridOffset = t.rowToGridOffset(row);
 
 			// first and last cell offset for the row
 			var rowCellOffsetFirst = row * colCnt;
@@ -668,6 +665,17 @@ function BasicYearView(element, calendar, viewName) {
 			// make sure segment's offsets are valid and in view
 			if (segmentCellOffsetFirst <= segmentCellOffsetLast) {
 
+				var gridOffset = t.rowToGridOffset(row);
+				var gridRow = rowToGridRow(row);
+				var lenBefore = segmentCellOffsetFirst - rangeCellOffsetFirst;
+				var skipSegment = false;
+
+				// segment in next month could begin before start date
+				if (gridRow == 0 && segments.length && lenBefore >= 0 && lenBefore <= 14
+					&& otherMonthDays[gridOffset+firstMonth][0] > 1) {
+					segmentCellOffsetFirst = Math.min(rangeCellOffsetFirst, rowCellOffsetFirst);
+				}
+
 				// translate to cells
 				var segmentCellFirst = t.cellOffsetToCell(segmentCellOffsetFirst);
 				var segmentCellLast = t.cellOffsetToCell(segmentCellOffsetLast);
@@ -679,26 +687,26 @@ function BasicYearView(element, calendar, viewName) {
 				// We need to compare "day offset" because "cell offsets" are often ambiguous and
 				// can translate to multiple days, and an edge case reveals itself when we the
 				// range's first cell is hidden (we don't want isStart to be true).
-				isStart = t.cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
-				isEnd = t.cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd; // +1 for comparing exclusively
+				var segmentDayOffsetLast = t.cellOffsetToDayOffset(segmentCellOffsetLast);
 
-				// check max len and hide unneeded segments at end of month
-				var skipHiddenWk = false;
-				if (Math.abs(cols[1]-cols[0]) >= len) {
-					skipHiddenWk = (!isEnd && !isStart);
-					isStart = true; isEnd = true;
-					if (segments.length)
-						cols[0] = cols[1] + 1 - len;
-					else
-						cols[1] = cols[0] - 1 + len;
+				// segment in end of month could ends after real end
+				while (segmentDayOffsetLast >= rangeDayOffsetEnd) {
+					cols[1]--; segmentDayOffsetLast--;
+					if (cols[1] < cols[0]) {
+						skipSegment = true;
+						break;
+					}
 				}
+
+				isStart = t.cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
+				isEnd = segmentDayOffsetLast + 1 == rangeDayOffsetEnd; // +1 (exclusively)
 
 				// segment in hidden month
 				if ($.inArray(firstMonth+gridOffset,hiddenMonths) != -1)
-					skipHiddenWk = true;
+					skipSegment = true;
 
 				// we could enhance this, hiding segments on hiddendays
-				if (!skipHiddenWk)
+				if (!skipSegment)
 					segments.push({
 						gridOffset: gridOffset,
 						row: row,
@@ -721,11 +729,22 @@ function BasicYearView(element, calendar, viewName) {
 		return (date.getMonth() == mi-(y*12));
 	}
 
+	// grid number of row
 	function rowToGridOffset(row) {
 		var cnt = 0;
 		for (var i=firstMonth; i<lastMonth; i++) {
 			cnt += rowsForMonth[i];
 			if (row < cnt) { return i-firstMonth; }
+		}
+		return -1;
+	}
+
+	// row index in grid
+	function rowToGridRow(row) {
+		var cnt = 0;
+		for (var i=firstMonth; i<lastMonth; i++) {
+			cnt += rowsForMonth[i];
+			if (row < cnt) { return row-(cnt-rowsForMonth[i]); }
 		}
 		return -1;
 	}
