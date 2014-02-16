@@ -31,7 +31,7 @@ function YearView(element, calendar) {
 		end.setFullYear(end.getFullYear(), lastMonth, 0);
 
 		var visStart = cloneDate(start);
-		var firstDay = opt('firstDay');
+		var firstDay = opt('firstDay') || 0;
 		var monthsPerRow = opt('yearColumns') || 3; //ex: '2x6', '3x4', '4x3'
 		var nwe = opt('weekends') ? 0 : 1;
 
@@ -43,10 +43,12 @@ function YearView(element, calendar) {
 		if (firstMonth + nbMonths > 12) {
 			t.title += formatDate(end, ' - yyyy');
 		}
+
 		t.start = start;
 		t.end = end;
 		t.visStart = visStart;
 		t.visEnd = visEnd;
+
 		renderYear(monthsPerRow, 6, nwe ? 5 : 7, true);
 	}
 }
@@ -64,7 +66,7 @@ function BasicYearView(element, calendar, viewName) {
 	t.clearSelection = clearSelection;
 	t.reportDayClick = reportDayClick; // for selection (kinda hacky)
 	t.defaultEventEnd = defaultEventEnd;
-	t.getHoverListener = function() { return hoverListener };
+	t.getHoverListener = function() { return hoverListener; };
 	t.colContentLeft = colContentLeft;
 	t.colContentRight = colContentRight;
 	t.colLeft = colLeft;
@@ -73,7 +75,7 @@ function BasicYearView(element, calendar, viewName) {
 	t.dateCell = dateCell;
 	t.allDayRow = allDayRow;
 	t.allDayBounds = allDayBounds;
-	t.getIsCellAllDay = function() { return true };
+	t.getIsCellAllDay = function() { return true; };
 	t.getRowCnt = function() { return rowCnt; };
 	t.getColCnt = function() { return colCnt; };
 	t.getColWidth = function() { return colWidth; };
@@ -92,6 +94,7 @@ function BasicYearView(element, calendar, viewName) {
 	t.dayOffsetToCellOffset = dayOffsetToCellOffset;
 	t.cellToCellOffset = cellToCellOffset;
 	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
+	t.dayOffsetToDate = dayOffsetToDate;
 
 	t.dragStart = dragStart;
 	t.dragStop  = dragStop;
@@ -108,10 +111,8 @@ function BasicYearView(element, calendar, viewName) {
 
 	// locals
 	var table;
-	var body;
 	var bodyRows;
 
-	var mainBody;
 	var subTables;
 
 	var bodyCells;
@@ -119,7 +120,6 @@ function BasicYearView(element, calendar, viewName) {
 	var daySegmentContainer;
 
 	var viewWidth;
-	var viewHeight;
 	var colWidth;
 
 	var rowCnt, colCnt;
@@ -168,20 +168,21 @@ function BasicYearView(element, calendar, viewName) {
 			dis = 1;
 			dit = 0;
 		}
-		firstDay = opt('firstDay');
+		firstDay = opt('firstDay') || 0;
 		firstMonth = opt('firstMonth') || 0;
 		lastMonth = opt('lastMonth') || firstMonth+12;
 		yearCellMinH = opt('yearCellMinH') || 20;
 		hiddenMonths = opt('hiddenMonths') || [];
 		nwe = opt('weekends') ? 0 : 1;
 		tm = opt('theme') ? 'ui' : 'fc';
-		colFormat = opt('columnFormat');
+		colFormat = opt('columnFormat') || 'MMMM';
 	}
 
 	function buildSkeleton(monthsPerRow, showNumbers) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
+		var head, headCells;
 		var i, j, m, n, y, monthsRow = 0;
 		var monthName, dayStr;
 		var di = cloneDate(t.start);
@@ -216,7 +217,7 @@ function BasicYearView(element, calendar, viewName) {
 			di.setFullYear(miYear,m, -1 * dowFirst+1);
 
 			// new month line
-			if (n%monthsPerRow==0 && n > 0 && !hiddenMonth) {
+			if (n%monthsPerRow===0 && n > 0 && !hiddenMonth) {
 				monthsRow++;
 				s+='<td class="fc-year-month-border fc-last"></td>'+
 					'</tr><tr>'+
@@ -231,14 +232,17 @@ function BasicYearView(element, calendar, viewName) {
 			s +='<table class="fc-border-separate fc-year-month" style="width:100%;" cellspacing="0">'+
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
-					'<div class="fc-year-monthly-name'+(monthsRow==0 ?' fc-first':'')+'">' +
+					'<div class="fc-year-monthly-name'+(monthsRow===0 ?' fc-first':'')+'">' +
 					'<a data-year="'+y+'" data-month="'+(m%12)+'" href="#">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +
 				'</td></tr>' +
 				'<tr>';
 
-			for (i=firstDay; i<colCnt+firstDay; i++) {
+			for (i=firstDay; i<firstDay+7; i++) {
+				if (nwe && (i%7 === 0 || i%7 === 6)) {
+					continue;
+				}
 				// need fc- for setDayID
 				s += '<th class="fc-year-weekly-head fc-'+dayIDs[i%7]+' '+headerClass+'" width="'+((100/colCnt)|0)+'%">'+
 				 localWeekNames[i%7]+'</th>';
@@ -247,9 +251,7 @@ function BasicYearView(element, calendar, viewName) {
 
 			rowsForMonth[m] = 0;
 			for (i=0; i<6; i++) {
-				if (nwe) {
-					skipWeekend(di);
-				}
+				if (nwe) { skipWeekend(di); }
 				// don't show week if all days are in next month
 				if (di.getMonth() == (m+1)%12 && opt('weekMode') != 'fixed') {
 					continue;
@@ -273,9 +275,7 @@ function BasicYearView(element, calendar, viewName) {
 					'</div>' +
 					'</td>';
 					addDays(di, 1);
-				}
-				if (nwe) {
-					skipWeekend(di);
+					if (nwe) { skipWeekend(di); }
 				}
 				s += '</tr>';
 			}
@@ -283,7 +283,7 @@ function BasicYearView(element, calendar, viewName) {
 			s += '<div class="fc-year-monthly-footer"></div>';
 			s += '</td>';
 
-			if (!hiddenMonth) n++;
+			if (!hiddenMonth) { n++; }
 		}
 		s += '<td class="fc-year-month-border fc-last"></td>';
 		s += '</tr></table>';
@@ -294,7 +294,6 @@ function BasicYearView(element, calendar, viewName) {
 
 		bodyRows = table.find('table tbody tr');
 		bodyCells = bodyRows.find('td').not('.fc-year-monthly-td');
-		bodyFirstCells = bodyCells.filter(':first-child');
 
 		subTables = table.find('table');
 		subTables.find('tbody .fc-week0').addClass('fc-first');
@@ -318,15 +317,14 @@ function BasicYearView(element, calendar, viewName) {
 	 * Compute otherMonthDays, set fc-today and day numbers
 	 */
 	function updateCells() {
-		var startYear = t.start.getFullYear();
 		var today = clearTime(new Date());
-		var cell, date, row;
+
+		if (!t.curYear) { t.curYear = cloneDate(t.start); }
+		var d = cloneDate(t.curYear);
+		var miYear = d.getFullYear();
 
 		subTables.each(function(i, _sub) {
-			if (!t.curYear) t.curYear = t.start;
 
-			var d = cloneDate(t.curYear);
-			var miYear = d.getFullYear();
 			var mi = i+firstMonth;
 
 			d.setFullYear(miYear, mi, 1);
@@ -339,13 +337,13 @@ function BasicYearView(element, calendar, viewName) {
 			otherMonthDays[mi] = [0,0,0,0];
 			$(_sub).find('tbody > tr').each(function(iii, _tr) {
 				if (nwe) { skipWeekend(d); }
-				if (iii == 0 && dateInMonth(d,mi) ) {
+				if (!iii && dateInMonth(d,mi) ) {
 					// in current month, but hidden (weekends) at start
 					otherMonthDays[mi][2] = d.getDate()-1;
 				}
 				$(_tr).find('td').each(function(ii, _cell) {
 
-					cell = $(_cell);
+					var cell = $(_cell);
 
 					if (!dateInMonth(d,mi)) {
 						cell.addClass('fc-other-month');
@@ -365,10 +363,10 @@ function BasicYearView(element, calendar, viewName) {
 					var $div = cell.find('div.fc-day-number');
 					$div.text(d.getDate());
 
-					if (dateInMonth(d,mi)) lastDateShown = d.getDate();
+					if (dateInMonth(d,mi)) { lastDateShown = d.getDate(); }
 					addDays(d, 1);
+					if (nwe) { skipWeekend(d); }
 				});
-				if (nwe) { skipWeekend(d); }
 			});
 
 			var endDaysHidden = daysInMonth(t.curYear.getFullYear(), mi+1) - lastDateShown;
@@ -412,8 +410,7 @@ function BasicYearView(element, calendar, viewName) {
 		if (!isFinite(overlayStart))
 			return;
 
-		var rowStart = cloneDate(t.visStart);
-		var row = 0;
+		var i, row = 0;
 		var offset = (overlayStart.getMonth() - t.start.getMonth() + 12) % 12;
 		coordinateGrid = coordinateGrids[offset];
 		if (refreshCoordinateGrid) {
@@ -477,6 +474,7 @@ function BasicYearView(element, calendar, viewName) {
 		return renderOverlay(rect, element);
 	}
 
+	/* used ? */
 	function getRowMaxWidth(row) {
 		return $(subTables[(row/5)|0]).width();
 	}
@@ -518,9 +516,9 @@ function BasicYearView(element, calendar, viewName) {
 		var cell = hoverListener.stop();
 		clearOverlays();
 		if (cell) {
-			var offset = cellToCellOffset(cell);
-			var dayOffset = cellOffsetToDayOffset(offset);
-			var d = dayOffsetToDate(dayOffset);
+			var offset = t.cellToCellOffset(cell);
+			var dayOffset = t.cellOffsetToDayOffset(offset);
+			var d = t.dayOffsetToDate(dayOffset);
 			trigger('drop', _dragElement, d, true, ev, ui);
 		}
 	}
@@ -630,7 +628,9 @@ function BasicYearView(element, calendar, viewName) {
 		addDays(realEnd,-1);
 
 		// ignore events outside current view
-		if (realEnd < t.visStart || startDate > t.visEnd) return segments;
+		if (realEnd < t.visStart || startDate > t.visEnd) {
+			return segments;
+		}
 
 		// day offset for given date range
 		var rangeDayOffsetStart = t.dateToDayOffset(startDate);
@@ -670,8 +670,8 @@ function BasicYearView(element, calendar, viewName) {
 				var skipSegment = false;
 
 				// segment in next month could begin before start date
-				if (gridRow == 0 && segments.length && lenBefore >= 0 && lenBefore <= 14
-					&& otherMonthDays[gridOffset+firstMonth][0] > 1) {
+				if (!gridRow && segments.length && lenBefore >= 0 && lenBefore <= 14
+				    && otherMonthDays[gridOffset+firstMonth][0] > 1) {
 					segmentCellOffsetFirst = Math.min(rangeCellOffsetFirst, rowCellOffsetFirst);
 				}
 
@@ -701,11 +701,12 @@ function BasicYearView(element, calendar, viewName) {
 				isEnd = segmentDayOffsetLast + 1 == rangeDayOffsetEnd; // +1 (exclusively)
 
 				// segment in hidden month
-				if ($.inArray(firstMonth+gridOffset,hiddenMonths) != -1)
+				if ($.inArray(firstMonth+gridOffset,hiddenMonths) != -1) {
 					skipSegment = true;
+				}
 
 				// we could enhance this, hiding segments on hiddendays
-				if (!skipSegment)
+				if (!skipSegment) {
 					segments.push({
 						gridOffset: gridOffset,
 						row: row,
@@ -714,6 +715,7 @@ function BasicYearView(element, calendar, viewName) {
 						isStart: isStart,
 						isEnd: isEnd
 					});
+				}
 			}
 		}
 		return segments;
