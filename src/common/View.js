@@ -385,7 +385,7 @@ function View(element, calendar, viewName) {
 	function cellToDate() {
 		var cellOffset = t.cellToCellOffset.apply(null, arguments);
 		var dayOffset = t.cellOffsetToDayOffset(cellOffset);
-		var date = dayOffsetToDate(dayOffset);
+		var date = t.dayOffsetToDate(dayOffset);
 		return date;
 	}
 
