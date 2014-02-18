@@ -181,10 +181,7 @@ function BasicYearView(element, calendar, viewName) {
 
 		startOfWeek(visStart);
 
-		/* can make problems on future events
-		   TODO: check school sample with firstDay 0
-		*/
-		addDays(visEnd, 7);
+		addDays(visEnd, 14);
 		startOfWeek(visEnd);
 		t.skipHiddenDays(visEnd, -1, true);
 
@@ -516,7 +513,7 @@ function BasicYearView(element, calendar, viewName) {
 			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
 			var di = new Date(t.curYear.getFullYear(), i, 1);
 
-			if (dayOffset < moDays) {
+			if (dayOffset < moDays || i == lastMonth-1) {
 				offset += otherMonthDays[i][0]; //days in other month at beginning of month;
 
 				for (j = 0; j < dayOffset; j++) {
@@ -527,10 +524,7 @@ function BasicYearView(element, calendar, viewName) {
 				}
 				return offset;
 			}
-			if (i == lastMonth-1) {
-				// on last month, allow overflow
-				return (offset + dayOffset);
-			}
+
 			dayOffset -= moDays;
 			offset += cellsForMonth(i);
 		}
