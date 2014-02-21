@@ -99,6 +99,7 @@ function BasicYearView(element, calendar, viewName) {
 	var isHiddenDay = t.isHiddenDay;
 	var daySelectionMousedown = t.daySelectionMousedown;
 	var formatDate = calendar.formatDate;
+	var cellToDate = t.cellToDate;
 
 	// locals
 	var table;
@@ -131,6 +132,10 @@ function BasicYearView(element, calendar, viewName) {
 	var tm;
 	var colFormat;
 	var yearCellMinH;
+	var showWeekNumbers;
+	var weekNumberTitle;
+	var weekNumberFormat;
+
 
 	/* Rendering
 	------------------------------------------------------------*/
@@ -160,6 +165,10 @@ function BasicYearView(element, calendar, viewName) {
 		hiddenMonths = opt('hiddenMonths') || [];
 		yearCellMinH = opt('yearCellMinH') || 20;
 		colFormat = opt('columnFormat') || 'MMMM';
+		showWeekNumbers = opt('weekNumbers');
+		weekNumberTitle = opt('weekNumberTitle');
+		weekNumberFormat = opt('weekNumberCalculation') != 'iso' ? "w" : "W";
+
 		nwe = opt('weekends') ? 0 : 1;
 		rtl = opt('isRTL');
 		tm = opt('theme') ? 'ui' : 'fc';
@@ -247,6 +256,13 @@ function BasicYearView(element, calendar, viewName) {
 				'</td></tr>' +
 				'<tr>';
 
+
+			if (showWeekNumbers) {
+				s += "<th class='fc-week-number " + headerClass + "'>" +
+					htmlEscape(weekNumberTitle) +
+					"</th>";
+			}
+
 			for (i=firstDay; i<firstDay+7; i++) {
 				if (nwe && (i%7 === 0 || i%7 === 6)) {
 					continue;
@@ -268,6 +284,14 @@ function BasicYearView(element, calendar, viewName) {
 				rowCnt++;
 
 				s += '<tr class="fc-week' + i + '">';
+				if (showWeekNumbers) {
+					s +=
+						"<td class='fc-week-number " + contentClass + "'>" +
+						"<div>" +
+						htmlEscape(formatDate(di, weekNumberFormat)) +
+						"</div>" +
+						"</td>";
+				}
 				for (j=0; j<colCnt; j++) {
 					if (di.getMonth() == (m%12)) {
 						dayStr=formatDate(di, '-yyyy-MM-dd');
@@ -342,7 +366,7 @@ function BasicYearView(element, calendar, viewName) {
 			otherMonthDays[mi] = [0,0,-1,-1];
 			$(_sub).find('tbody > tr').each(function(iii, _tr) {
 
-				$(_tr).find('td').each(function(ii, _cell) {
+				$(_tr).find('td').not('.fc-week-number').each(function(ii, _cell) {
 
 					var cell = $(_cell);
 
@@ -530,22 +554,21 @@ function BasicYearView(element, calendar, viewName) {
 		}
 	}
 
-	function cellToCellOffset(row, col) {
+	function cellToCellOffset(row, col, gridOffset) {
 		var colCnt = t.getColCnt();
-		var grid = null;
 
 		// rtl variables. wish we could pre-populate these. but where?
 		var dis = rtl ? -1 : 1;
 		var dit = rtl ? colCnt - 1 : 0;
 
 		if (typeof row == 'object') {
-			grid = row.grid;
+			gridOffset = row.grid.offset;
 			col = row.col;
 			row = row.row;
 		}
 
 		var offset = 0;
-		for (var i = 0; i < grid.offset; i++) {
+		for (var i = 0; i < (gridOffset || 0); i++) {
 			offset += cellsForMonth(i+firstMonth);
 		}
 
