@@ -19,11 +19,11 @@ function YearView(element, calendar) {
 		var dateRange = cloneDate(date, true);
 		dateRange.setFullYear(date.getFullYear(),lastMonth,0, 12);
 		if (delta) {
-			t.curYear = addYears(date, delta);
+			addYears(date, delta);
 		}
 		// for school years month to year navigation
 		else if (firstMonth > 0 && date.getMonth() <= dateRange.getMonth()) {
-			t.curYear = addYears(date, -1);
+			addYears(date, -1);
 		}
 		var start = cloneDate(date, true);
 		start.setFullYear(start.getFullYear(),firstMonth,1, 12);
@@ -92,6 +92,8 @@ function BasicYearView(element, calendar, viewName) {
 	t.cellOffsetToDayOffset = cellOffsetToDayOffsetYear;
 	var dayOffsetToCellOffset = t.dayOffsetToCellOffset;
 	t.dayOffsetToCellOffset = dayOffsetToCellOffsetYear;
+	var changeView = calendar.changeView;
+	calendar.changeView = changeViewFromYear;
 
 	// imports
 	var opt = t.opt;
@@ -158,7 +160,7 @@ function BasicYearView(element, calendar, viewName) {
 		var monthsPerRow = parseInt(yearColumns,10); //"3x4" parses to 3
 		buildSkeleton(monthsPerRow, showNumbers);
 		updateCells();
-		opt('debug') && updateCellsDbg();
+		opt('debug') && debugCellOffsets();
 		buildCoordGrids();
 	}
 
@@ -355,8 +357,7 @@ function BasicYearView(element, calendar, viewName) {
 	function updateCells() {
 		var today = clearTime(new Date());
 
-		if (!t.curYear) { t.curYear = cloneDate(t.start); }
-		var d = cloneDate(t.curYear);
+		var d = cloneDate(t.start);
 		var miYear = d.getFullYear();
 
 		subTables.each(function(i, _sub) {
@@ -405,7 +406,7 @@ function BasicYearView(element, calendar, viewName) {
 				});
 			});
 
-			var endDaysHidden = daysInMonth(t.curYear.getFullYear(), mi+1) - lastDateShown;
+			var endDaysHidden = daysInMonth(t.start.getFullYear(), mi+1) - lastDateShown;
 			// in current month, but hidden (weekends) at end
 			otherMonthDays[mi][3] = endDaysHidden;
 
@@ -416,11 +417,10 @@ function BasicYearView(element, calendar, viewName) {
 	/**
 	 * Show computed offsets to debug
 	 */
-	function updateCellsDbg() {
+	function debugCellOffsets() {
 		var today = clearTime(new Date());
 
-		if (!t.curYear) { t.curYear = cloneDate(t.start); }
-		var d = cloneDate(t.curYear);
+		var d = cloneDate(t.start);
 		var miYear = d.getFullYear();
 
 		subTables.each(function(i, _sub) {
@@ -591,19 +591,11 @@ function BasicYearView(element, calendar, viewName) {
 
 		for (i=firstMonth; i<lastMonth; i++) {
 
-			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
-			var di = new Date(t.curYear.getFullYear(),i,1, 12,0);
+			var moDays = daysInMonth(t.start.getFullYear(), i+1);
+			var di = new Date(t.start.getFullYear(),i,1, 12,0);
 
 			if (dayOffset < moDays || i == lastMonth-1) {
-/*
-				var tmp = cloneDate(t.visStart);
-				t.visStart = di;
-				startOfWeek(t.visStart);
-				var orig = offset+dayOffsetToCellOffset(dOffset);
-				console.log('orig:',orig,offset,di,t.visStart);
-				t.visStart = tmp;
-				return orig;
-*/
+
 				offset += otherMonthDays[i][0]; //days in other month at beginning of month;
 
 				for (j = 0; j < dayOffset; j++) {
@@ -652,18 +644,14 @@ function BasicYearView(element, calendar, viewName) {
 		var monthFirst=0;
 
 		for (var i=firstMonth; i<lastMonth; i++) {
-			var moDays = daysInMonth(t.curYear.getFullYear(), i+1);
+			var moDays = daysInMonth(t.start.getFullYear(), i+1);
 			var moCellDays = cellsForMonth(i);
 
 			if (cellOffset < moCellDays) {
 
-				//var dec = cellOffsetToDayOffset(cellOffset)+monthFirst;
-				//console.log("cell2day",c,cellOffset,dec,monthFirst);
-				//return dec;
-
 				cellOffset -= otherMonthDays[i][0];
 				cellOffset += otherMonthDays[i][2];
-				var di = new Date(t.curYear.getFullYear(),i,1, 12);
+				var di = new Date(t.start.getFullYear(),i,1, 12);
 
 				while (cellOffset > 0 || (nwe && isHiddenDay(di))) {
 					if (!nwe || !isHiddenDay(di)) {
@@ -908,5 +896,15 @@ function BasicYearView(element, calendar, viewName) {
 		};
 	}
 
+	// overrides Agenda function to set current date from school view (multi-year)
+	// else a click to 'month/week' buttons could use the previous year
+	function changeViewFromYear(newViewName) {
+		var currentView = calendar.getView().name;
+		changeView(newViewName);
+		if (firstMonth > 0 && currentView == 'year' && newViewName != currentView) {
+			var today = clearTime(new Date());
+			calendar.gotoDate(today);
+		}
+	}
 
 }
