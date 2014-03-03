@@ -210,7 +210,7 @@ function BasicYearView(element, calendar, viewName) {
 		var contentClass = tm + "-widget-content";
 		var head, headCells;
 		var i, j, m, n, y, monthsRow = 0;
-		var monthName, dayStr;
+		var monthName, monthID, dayStr;
 		var di = cloneDate(t.start);
 		var miYear = di.getFullYear();
 		var nbMonths = lastMonth-firstMonth;
@@ -233,6 +233,7 @@ function BasicYearView(element, calendar, viewName) {
 
 			di.setFullYear(miYear,m,1, 12);
 			y = di.getFullYear();
+			monthID = formatDate(di, 'yyyyMM');
 			monthName = formatDate(di, 'MMMM');
 			if (firstMonth + nbMonths > 12) {
 				monthName = monthName + ' ' + y;
@@ -256,7 +257,7 @@ function BasicYearView(element, calendar, viewName) {
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
 					'<div class="fc-year-monthly-name'+(monthsRow===0 ?' fc-first':'')+'">' +
-					'<a data-year="'+y+'" data-month="'+(m%12)+'" href="#">' +
+					'<a name="'+monthID+'" data-year="'+y+'" data-month="'+(m%12)+'" href="javascript:return false;">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +
 				'</td></tr>' +
