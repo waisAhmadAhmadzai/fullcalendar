@@ -257,7 +257,7 @@ function BasicYearView(element, calendar, viewName) {
 				'<thead>'+
 				'<tr><td colspan="7" class="fc-year-monthly-header" />' +
 					'<div class="fc-year-monthly-name'+(monthsRow===0 ?' fc-first':'')+'">' +
-					'<a name="'+monthID+'" data-year="'+y+'" data-month="'+(m%12)+'" href="javascript:return false;">' +
+					'<a name="'+monthID+'" data-year="'+y+'" data-month="'+(m%12)+'" href="javascript:;">' +
 					htmlEscape(monthName) + '</a>' +
 					'</div>' +
 				'</td></tr>' +
